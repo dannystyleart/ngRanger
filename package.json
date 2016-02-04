@@ -1,0 +1,15 @@
+{
+  "name": "ng-slider",
+  "version": "1.0.0",
+  "description": "AngularJS slider components",
+  "main": "ngSlider.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Dániel Sebestyén",
+  "license": "MIT",
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-typescript": "^2.10.0"
+  }
+}

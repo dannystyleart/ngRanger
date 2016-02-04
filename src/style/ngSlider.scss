@@ -1,0 +1,29 @@
+[ng-slider], .ng-slider{
+
+    display:block;
+    position: relative;
+
+    .ng-slider-min-label,
+    .ng-slider-max-label,
+    .ng-slider-label{
+        &:hover{
+
+        }
+    }
+
+    .ng-slider-handle{
+        &:hover{
+
+        }
+        &:active, &.active{
+
+        }
+    }
+
+    .ng-slider-fullbar{
+
+    }
+    .ng-slider-selection{
+
+    }
+}

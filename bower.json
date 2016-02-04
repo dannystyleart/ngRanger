@@ -1,0 +1,34 @@
+{
+  "name": "ng-slider",
+  "description": "AngularJS slider components",
+  "main": "ngSlider.js",
+  "authors": [
+    "Dániel Sebestyén"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "ng",
+    "slider",
+    "angular",
+    "range",
+    "range-slider",
+    "typescript",
+    "js",
+    "no-jquery",
+    "directive"
+  ],
+  "moduleType": [],
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "dt-angular": "^1.2.16",
+    "angular": "angularjs#^1.4.9"
+  }
+}
