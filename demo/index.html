@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ngSlider</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.6/paper/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="src/css/ngSlider.css">
+</head>
+<body ng-app="app">
+
+<div class="container">
+    <div class="col-xs-12 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3">
+
+        <div class="panel panel-default">
+            <div class="jumbotron" style="margin-bottom: 0">
+                <h3 class="text-center">ngSlider <span class="fa fa-fw fa-map-marker"></span></h3>
+            </div>
+            <div class="panel-body">
+                <h6 class="text-uppercase">About</h6>
+            </div>
+            <div class="panel-body" ng-controller="SliderExampleController">
+                <h6 class="text-muted text-uppercase">Slider Example</h6>
+
+                <ng-slider min="rangeMin" max="rangeMax" model="sliderModel"></ng-slider>
+            </div>
+            <div class="panel-body" ng-controller="RangerExampleController">
+                <h6 class="text-muted text-uppercase">Ranger Example</h6>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="bower_components/angular/angular.min.js"></script>
+<script src="src/js/ngSlider.module.js"></script>
+<script src="src/js/ngSlider.directive.js"></script>
+<script src="src/js/ngRanger.directive.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

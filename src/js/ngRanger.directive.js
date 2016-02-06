@@ -1,5 +1,5 @@
-var ngSlider;
-(function (ngSlider) {
+var ngSliderComponents;
+(function (ngSliderComponents) {
     var ngRanger = (function () {
         function ngRanger() {
         }
@@ -16,4 +16,4 @@ var ngSlider;
         }];
     angular.module('ngSlider')
         .directive('ngRanger', ngRangerDirective);
-})(ngSlider || (ngSlider = {}));
+})(ngSliderComponents || (ngSliderComponents = {}));

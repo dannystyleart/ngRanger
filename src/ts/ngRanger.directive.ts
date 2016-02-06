@@ -1,4 +1,4 @@
-module ngSlider {
+module ngSliderComponents {
 
     class ngRanger {
 

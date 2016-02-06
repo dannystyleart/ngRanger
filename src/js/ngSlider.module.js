@@ -1,4 +1,4 @@
-var ngSlider;
-(function (ngSlider) {
+var ngSliderComponents;
+(function (ngSliderComponents) {
     angular.module('ngSlider', []);
-})(ngSlider || (ngSlider = {}));
+})(ngSliderComponents || (ngSliderComponents = {}));

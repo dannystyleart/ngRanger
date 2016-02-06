@@ -67,7 +67,7 @@ _html_
 
 _js_
 
-    app.controller('MyCtrl', function($scope){
+    app.controller('ExampleController', function($scope){
         $scope.mySliderModel = 2;
         $scope.mySliderModelHigh = 4;
         $scope.translateFn = function(valueKey){
