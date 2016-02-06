@@ -9,7 +9,9 @@ module ngSliderComponents {
             restrict: 'AE',
             replace: true,
             scope: {},
-            link: ngRanger,
+            link: function () {
+                
+            },
             template: '<h1>It works!</h1>'
         }
     }];

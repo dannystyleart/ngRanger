@@ -1,10 +1,12 @@
 module ngSliderComponents {
 
     export interface ISliderScope extends ng.IScope {
-        model: number,
-        min: number,
-        max: number,
-        showLabels?:boolean
+        model: number;
+        min: number;
+        max: number;
+        step: number;
+        precision: number;
+        showLabels?:boolean;
         translateFn():ng.IInterpolationFunction;
     }
 
@@ -22,6 +24,18 @@ module ngSliderComponents {
         width():number {
             return this.element[0].getBoundingClientRect().width;
         }
+
+        hide():void {
+            this.element.css({'opacity': 0});
+        }
+
+        show():void {
+            this.element.css({'opacity': 1});
+        }
+
+        setContent(content) {
+            this.element.html(content);
+        }
     }
 
     class SliderDirective {
@@ -30,11 +44,12 @@ module ngSliderComponents {
 
         restrict = 'E';
         replace = true;
-        scope = {model: '=', min: '=', max: '=', translateFn: '&'};
+        scope = {model: '=', min: '=', max: '=', translateFn: '&', step: '=', precision: '='};
         template = '<div class="ng-slider">' +
             '<span class="ng-slider-min-label"></span>' +
             '<span class="ng-slider-max-label"></span>' +
             '<span class="ng-slider-handle"></span>' +
+            '<span class="ng-slider-label"></span>' +
             '<span class="ng-slider-fullbar"></span>' +
             '<span class="ng-slider-selection"></span>' +
             '</div>';
@@ -143,7 +158,7 @@ module ngSliderComponents {
             this.bindEventsToElements();
 
             angular.element(this.$window).bind('resize', () => {
-                this.$timeout(() =>{
+                this.$timeout(() => {
                     this.initElements();
                     this.calcViewDimensions();
                 });
@@ -168,6 +183,8 @@ module ngSliderComponents {
             this.minVal = this.$$scope.min;
             this.maxVal = this.$$scope.max;
             this.valueRange = this.maxVal - this.minVal;
+            this.step = angular.isDefined(this.$$scope.step) ? this.$$scope.step : 1;
+            this.precision = angular.isDefined(this.$$scope.precision) ? this.$$scope.precision : 0;
         }
 
         /**
@@ -185,7 +202,7 @@ module ngSliderComponents {
          */
         initElements():void {
 
-            if(this.handles.length){
+            if (this.handles.length) {
                 this.handles = [];
             }
 
@@ -198,8 +215,7 @@ module ngSliderComponents {
                         var minLabel = new SlideElement(element, this.minVal);
                         this.handles.push(minLabel);
                         this.$timeout(() => {
-                            this.setLeft(minLabel, 0);
-                            minLabel.element.text(this.translateFn(this.minVal));
+                            this.updateLabels();
                         });
                         break;
                     case 1:
@@ -207,8 +223,7 @@ module ngSliderComponents {
                         var maxLabel = new SlideElement(element, this.maxVal);
                         this.handles.push(maxLabel);
                         this.$timeout(() => {
-                            maxLabel.element.text(this.translateFn(this.maxVal));
-                            this.setLeft(maxLabel, this.fullBarWidth - maxLabel.width());
+                            this.updateLabels();
                         });
                         break;
                     case 2:
@@ -217,20 +232,28 @@ module ngSliderComponents {
                         this.handleWidth = handler.width();
                         this.handles.push(handler);
                         this.$timeout(() => {
-                            this.setLeft(handler, this.valueToOffset(this.$$scope.model));
+                            this.updateHandler();
                         });
                         break;
                     case 3:
+                        // handle label
+                        var handlerLabel = new SlideElement(element, this.$$scope.model);
+                        this.handles.push(handlerLabel);
+                        this.$timeout(() => {
+                            this.updateLabels();
+                        });
+                        break;
+                    case 4:
                         // fullbar
                         var fullBar = new SlideElement(element, this.minVal);
                         this.handles.push(fullBar);
                         this.fullBarWidth = fullBar.width();
                         break;
-                    case 4:
+                    case 5:
                         // selection
                         var selection = new SlideElement(element, this.minVal);
-                        this.$timeout(() =>{
-                            selection.element.css({'width' : this.valueToOffset(this.$$scope.model) + 'px'});
+                        this.$timeout(() => {
+                            this.updateSelection();
                         });
                         this.handles.push(selection);
 
@@ -244,6 +267,9 @@ module ngSliderComponents {
          * Bind events to elements for dragging and clicking
          */
         bindEventsToElements():void {
+
+            angular.element(this.$$element).bind('DOMMouseScroll mousewheel', angular.bind(this, this.onWheel));
+
             var _handles = this.handles.filter((sliderItem) => {
                 if (sliderItem.element.hasClass('ng-slider-handle')) {
                     return sliderItem;
@@ -254,6 +280,61 @@ module ngSliderComponents {
                 handler.element.bind('mousedown', angular.bind(this, this.onStart, handler));
             });
 
+        }
+
+        /**
+         * Compute event's X offset
+         * @param {JQueryInputEventObject} event
+         * @returns {number}
+         */
+        private eventX(event:JQueryInputEventObject & any):number {
+            var eventX = 0;
+            if (angular.isDefined(event.clientX)) {
+                eventX = event.clientX;
+            } else if (angular.isDefined(event.originalEvent)) {
+                eventX = event.originalEvent.touches[0].clientX;
+            } else if (angular.isArray(event.touches) && event.touches.length > 0) {
+                eventX = event.touches[0].clientX;
+            }
+            return eventX;
+        }
+
+        private wheelDelta(event:JQueryInputEventObject & any):number {
+            var delta = 0;
+
+            if (angular.isDefined(event.wheelDelta)) {
+                delta = event.wheelDelta
+            } else if (angular.isDefined(event.originalEvent.wheelDelta)) {
+                delta = event.originalEvent.wheelDelta
+            } else if (angular.isDefined(event.originalEvent.detail)) {
+                delta = event.originalEvent.detail
+            }
+
+            return delta;
+        }
+
+        /**
+         * Event handler for event fired on mousewheel event on the slider element
+         * @param {jQLiteEvent} event
+         */
+        onWheel(event:JQueryEventObject):void {
+            event.preventDefault();
+            event.stopPropagation();
+
+            if (this.wheelDelta(event) > 0) {
+                if (this.$$scope.model + this.step <= this.maxVal) {
+                    this.$$scope.model += this.step;
+                }
+            } else {
+                if (this.$$scope.model - this.step >= this.minVal) {
+                    this.$$scope.model -= this.step;
+                }
+            }
+
+            this.$$scope.$apply();
+            this.updateHandler();
+            this.updateLabels();
+            this.updateSelection();
         }
 
         /**
@@ -276,7 +357,8 @@ module ngSliderComponents {
          * @param {jQLiteEvent} event
          */
         onMove(handler:SlideElement, event:JQueryInputEventObject & any) {
-            var eventX = event.clientX || (typeof(event.originalEvent) != 'undefined' ? event.originalEvent.touches[0].clientX : event.touches[0].clientX),
+
+            var eventX = this.eventX(event),
                 sliderLO = this.left,
                 newOffset = eventX - sliderLO - (this.handleWidth / 2),
                 newValue;
@@ -285,33 +367,84 @@ module ngSliderComponents {
 
             if (newOffset <= 0 || newValue <= 0) {
                 if (handler.sLeft !== 0) {
-                    this.setLeft(handler, 0);
                     handler.sVal = 0;
                     this.$$scope.model = 0;
                     this.$$scope.$apply();
-                    var selection = this.getHandler('SELECTION');
-                    selection.element.css({'width':'0px'});
+                    this.updateHandler();
+                    this.updateLabels();
+                    this.updateSelection();
                 }
 
                 return;
             } else if (newOffset > this.maxLeft || newValue > this.maxVal) {
-                this.setLeft(handler, this.maxLeft);
+
                 handler.sVal = this.maxVal;
                 this.$$scope.model = this.maxVal;
                 this.$$scope.$apply();
-                var selection = this.getHandler('SELECTION');
-                selection.element.css({'width':this.fullBarWidth+'px'});
+                this.updateHandler();
+                this.updateLabels();
+                this.updateSelection();
                 return;
             }
 
-            this.setLeft(handler, newOffset);
+
             handler.sVal = newValue;
             this.$$scope.model = newValue;
             this.$$scope.$apply();
 
-            var selection = this.getHandler('SELECTION');
-            selection.element.css({'width':newOffset+'px'});
+            this.updateHandler();
+            this.updateLabels();
+            this.updateSelection();
 
+        }
+
+        updateHandler() {
+            var handler = this.getHandler('HANDLE'),
+                newOffset = this.valueToOffset(this.$$scope.model);
+            this.setLeft(handler, newOffset);
+        }
+
+        updateLabels() {
+
+            var handleLabel = this.getHandler('HANDLELABEL'),
+                minLabel = this.getHandler('MINLABEL'),
+                maxLabel = this.getHandler('MAXLABEL'),
+                handleLabelOffset = 0;
+
+            handleLabel.setContent(this.translateFn(this.$$scope.model));
+            handleLabelOffset = this.valueToOffset(this.$$scope.model) - (handleLabel.width() / 2) + (this.handleWidth / 2);
+            if (handleLabelOffset < 0) {
+                this.setLeft(handleLabel, 0);
+            } else if (handleLabelOffset + handleLabel.width() >= this.fullBarWidth) {
+                this.setLeft(handleLabel, this.fullBarWidth - handleLabel.width());
+            } else {
+                this.setLeft(handleLabel, handleLabelOffset);
+            }
+
+            minLabel.setContent(this.translateFn(this.minVal));
+            this.setLeft(minLabel, 0);
+            maxLabel.setContent(this.translateFn(this.maxVal));
+            this.setLeft(maxLabel, this.fullBarWidth - maxLabel.width());
+
+
+
+            if (handleLabelOffset <= minLabel.width()) {
+                minLabel.hide();
+            } else {
+                minLabel.show();
+            }
+
+            if (handleLabelOffset + handleLabel.width() < (this.fullBarWidth - maxLabel.width())) {
+                maxLabel.show();
+            } else {
+                maxLabel.hide();
+            }
+        }
+
+        updateSelection() {
+            var selection = this.getHandler('SELECTION'),
+                newOffset = this.valueToOffset(this.$$scope.model);
+            selection.element.css({'width': newOffset + 'px'});
         }
 
         /**
@@ -324,6 +457,9 @@ module ngSliderComponents {
             this.$document.unbind('mousemove');
             this.$document.unbind('mouseup');
             this.$$scope.$emit('ngSlider:stop', this.$$scope.model);
+            this.updateHandler();
+            this.updateLabels();
+            this.updateSelection();
         }
 
         /**
@@ -360,15 +496,21 @@ module ngSliderComponents {
          * @returns {number}
          */
         roundValue(value:any):number {
-            return parseInt(value.toFixed(this.precision));
+
+            var step = this.step,
+                remainder = (value - this.minVal) % step,
+                steppedValue = remainder > (step / 2) ? value + step - remainder : value - remainder;
+
+            return +(steppedValue).toFixed(this.precision);
+
         }
 
-        getHandler(handlerName:string):SlideElement{
+        getHandler(handlerName:string):SlideElement {
 
             var lookupClass,
                 element;
 
-            switch (handlerName.toUpperCase()){
+            switch (handlerName.toUpperCase()) {
                 case 'FULLBAR':
                     lookupClass = 'ng-slider-fullbar';
                     break;
@@ -377,6 +519,9 @@ module ngSliderComponents {
                     break;
                 case 'HANDLE':
                     lookupClass = 'ng-slider-handle';
+                    break;
+                case 'HANDLELABEL':
+                    lookupClass = 'ng-slider-label';
                     break;
                 case 'MINLABEL':
                     lookupClass = 'ng-slider-min-label';
@@ -387,7 +532,7 @@ module ngSliderComponents {
             }
 
             this.handles.forEach(function (handle) {
-                if(handle.element.hasClass(lookupClass)){
+                if (handle.element.hasClass(lookupClass)) {
                     element = handle;
                 }
             });

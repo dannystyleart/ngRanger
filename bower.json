@@ -1,7 +1,7 @@
 {
   "name": "ng-slider",
   "description": "AngularJS slider components",
-  "main": "ngSlider.js",
+  "main": ["dist/js/ngSlider.min.js", "dist/css/ngSlider.min.css"],
   "authors": [
     "Dániel Sebestyén"
   ],
@@ -17,7 +17,6 @@
     "no-jquery",
     "directive"
   ],
-  "moduleType": [],
   "homepage": "",
   "private": true,
   "ignore": [

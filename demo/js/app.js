@@ -3,29 +3,32 @@
 
     var demoApp = angular.module('app', ['ngSlider']);
 
+    var debuggerService = ['$window', function () {
+        return {
+            log: function () {
+                if (arguments.length > 0) {
+                    console.log('%c Debugger log:  ', 'background: #2196F3; color: #FFF;display:inline-block;padding:2px;text-transform: uppercase; font-weight: bold;');
+                    console.log.apply(console, arguments);
+                }
+            }
+        }
+    }];
 
-    var SliderExampleController = ['$scope', function ($scope) {
+    demoApp.service('Debugger', debuggerService);
+
+    var SliderExampleController = ['$scope', 'Debugger', function ($scope, Debugger) {
 
         $scope.rangeMin = 0;
         $scope.rangeMax = 100;
-        $scope.sliderModel = 25;
-$scope.translateFn = function (value) {
+        $scope.sliderModel = 0;
+        $scope.translateFn = function (value) {
 
-    if (value === $scope.rangeMin) {
-        return '$' + $scope.rangeMin;
-    } else if (value < 3) {
-        return 'Too cheap ($' + value + ')';
-    } else if (value >= 3 && value <= 5) {
-        return 'Could be good ($ ' + value + ')';
-    } else if (value === $scope.rangeMax) {
-        return '$' + $scope.rangeMax;
-    }
-    return 'Too expensive ($' + value + ')';
+            return '$' + (value.toFixed(2));
 
-};
+        };
 
         $scope.$on('ngSlider:stop', function (event, value) {
-            console.log('ngSlider event: stop', 'ngSlider event argument: ', value);
+            Debugger.log('ngSlider event: stop', 'ngSlider event argument: ', value)
         });
 
     }];
