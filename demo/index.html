@@ -22,7 +22,15 @@
             <div class="panel-body" ng-controller="SliderExampleController">
                 <h6 class="text-muted text-uppercase">Slider Example</h6>
 
-                <ng-slider min="rangeMin" max="rangeMax" model="sliderModel"></ng-slider>
+                <ng-slider min="rangeMin" max="rangeMax" model="sliderModel" translate-fn="translateFn"></ng-slider>
+
+                <span class="text-muted text-uppercase">Debug</span>
+                <pre>
+$scope.rangeMin = {{ rangeMin | json }};
+$scope.rangeMax = {{ rangeMax | json }};
+$scope.sliderModel = {{ sliderModel | json }};
+$scope.translateFn($scope.sliderModel) = {{translateFn(sliderModel) | json}}</pre>
+
             </div>
             <div class="panel-body" ng-controller="RangerExampleController">
                 <h6 class="text-muted text-uppercase">Ranger Example</h6>
