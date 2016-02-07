@@ -164,6 +164,17 @@ module ngSliderComponents {
                 });
             });
 
+            var modelWatcher = this.$$scope.$watch('model', (current, prev) => {
+                if (angular.isDefined(current) && (current !== prev)) {
+                    this.updateHandler();
+                    this.updateLabels();
+                    this.updateSelection();
+                }
+            }, true);
+
+            this.$$scope.$on('$destroy', () => {
+                modelWatcher;
+            });
 
         };
 
@@ -214,34 +225,22 @@ module ngSliderComponents {
                         // min-label
                         var minLabel = new SlideElement(element, this.minVal);
                         this.handles.push(minLabel);
-                        this.$timeout(() => {
-                            this.updateLabels();
-                        });
                         break;
                     case 1:
                         // max-label
                         var maxLabel = new SlideElement(element, this.maxVal);
                         this.handles.push(maxLabel);
-                        this.$timeout(() => {
-                            this.updateLabels();
-                        });
                         break;
                     case 2:
                         // handle
                         var handler = new SlideElement(element, this.minVal);
                         this.handleWidth = handler.width();
                         this.handles.push(handler);
-                        this.$timeout(() => {
-                            this.updateHandler();
-                        });
                         break;
                     case 3:
                         // handle label
                         var handlerLabel = new SlideElement(element, this.$$scope.model);
                         this.handles.push(handlerLabel);
-                        this.$timeout(() => {
-                            this.updateLabels();
-                        });
                         break;
                     case 4:
                         // fullbar
@@ -252,14 +251,17 @@ module ngSliderComponents {
                     case 5:
                         // selection
                         var selection = new SlideElement(element, this.minVal);
-                        this.$timeout(() => {
-                            this.updateSelection();
-                        });
                         this.handles.push(selection);
-
                         break;
                 }
             }, this);
+
+
+            this.$timeout(() => {
+                this.updateHandler();
+                this.updateSelection();
+                this.updateLabels();
+            });
 
         }
 
@@ -277,7 +279,7 @@ module ngSliderComponents {
             });
 
             angular.forEach(_handles, (handler) => {
-                handler.element.bind('mousedown', angular.bind(this, this.onStart, handler));
+                handler.element.bind('mousedown touchstart', angular.bind(this, this.onStart, handler));
             });
 
         }
@@ -291,14 +293,20 @@ module ngSliderComponents {
             var eventX = 0;
             if (angular.isDefined(event.clientX)) {
                 eventX = event.clientX;
+            } else if (angular.isDefined(event.touches) && event.touches.length > 0) {
+                eventX = event.touches[0].clientX;
             } else if (angular.isDefined(event.originalEvent)) {
                 eventX = event.originalEvent.touches[0].clientX;
-            } else if (angular.isArray(event.touches) && event.touches.length > 0) {
-                eventX = event.touches[0].clientX;
             }
+
             return eventX;
         }
 
+        /**
+         * Compute mousewheel event's delta value
+         * @param {JQueryInputEventObject} event
+         * @returns {number}
+         */
         private wheelDelta(event:JQueryInputEventObject & any):number {
             var delta = 0;
 
@@ -314,12 +322,22 @@ module ngSliderComponents {
         }
 
         /**
+         * Proper event stopping
+         * @param {JQueryEventObject} event
+         */
+        private stopEvent(event:JQueryEventObject):void {
+            if (event.stopPropagation) event.stopPropagation();
+            if (event.preventDefault) event.preventDefault();
+            event.cancelBubble = true;
+            event.returnValue = false;
+        }
+
+        /**
          * Event handler for event fired on mousewheel event on the slider element
          * @param {jQLiteEvent} event
          */
         onWheel(event:JQueryEventObject):void {
-            event.preventDefault();
-            event.stopPropagation();
+            this.stopEvent(event);
 
             if (this.wheelDelta(event) > 0) {
                 if (this.$$scope.model + this.step <= this.maxVal) {
@@ -343,12 +361,11 @@ module ngSliderComponents {
          * @param {jQLiteEvent} event
          */
         onStart(handler:SlideElement, event:JQueryEventObject) {
-            event.stopPropagation();
-            event.preventDefault();
+            this.stopEvent(event);
 
             handler.element.addClass('active');
-            this.$document.on('mousemove', angular.bind(this, this.onMove, handler));
-            this.$document.on('mouseup', angular.bind(this, this.onStop, handler));
+            this.$document.on('mousemove touchmove', angular.bind(this, this.onMove, handler));
+            this.$document.on('mouseup touchend', angular.bind(this, this.onStop, handler));
         }
 
         /**
@@ -427,7 +444,6 @@ module ngSliderComponents {
             this.setLeft(maxLabel, this.fullBarWidth - maxLabel.width());
 
 
-
             if (handleLabelOffset <= minLabel.width()) {
                 minLabel.hide();
             } else {
@@ -454,8 +470,8 @@ module ngSliderComponents {
          */
         onStop(handler:SlideElement) {
             handler.element.removeClass('active');
-            this.$document.unbind('mousemove');
-            this.$document.unbind('mouseup');
+            this.$document.unbind('mousemove touchmove');
+            this.$document.unbind('mouseup touchend');
             this.$$scope.$emit('ngSlider:stop', this.$$scope.model);
             this.updateHandler();
             this.updateLabels();

@@ -21,15 +21,24 @@
         $scope.rangeMin = 0;
         $scope.rangeMax = 100;
         $scope.sliderModel = 0;
+        $scope.debugPane = 'HTML';
         $scope.translateFn = function (value) {
 
             return '$' + (value.toFixed(2));
 
         };
 
+        $scope.setModel = function (value) {
+            $scope.sliderModel = value;
+        };
+
         $scope.$on('ngSlider:stop', function (event, value) {
             Debugger.log('ngSlider event: stop', 'ngSlider event argument: ', value)
         });
+
+        $scope.toggleDebugPane = function (pane) {
+            $scope.debugPane = pane;
+        };
 
     }];
 

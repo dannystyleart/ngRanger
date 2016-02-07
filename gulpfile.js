@@ -9,6 +9,7 @@ var gulp = require('gulp'),
     cssmin = require('gulp-cssmin'),
     rimraf = require('gulp-rimraf'),
     ngAnnotate = require('gulp-ng-annotate'),
+    replace = require('gulp-replace'),
     injectString = require('gulp-inject-string');
 
 /********************************
@@ -33,6 +34,23 @@ AUTOPREFIX_CONFIG = {
 /********************************
  * Utilities
  *******************************/
+function toIncludeTags(sources, type) {
+    var tags = '';
+    switch (type.toUpperCase()) {
+        case 'CSS':
+            sources.forEach(function (src) {
+                tags += '<link rel="stylesheet" href="' + src + '">\r\n';
+            });
+            break;
+        case 'JS':
+            sources.forEach(function (src) {
+                tags += '<script src="' + src + '"></script>\r\n';
+            });
+            break;
+    }
+    return tags;
+}
+
 gulp.task('util:cleanup', function () {
     gulp.src(['src/js/**/*.js', 'src/css/**/*.css', 'dist/**/*.{js,css}'], {read: false})
         .pipe(rimraf());
@@ -42,6 +60,26 @@ gulp.task('util:watch', function () {
     gulp.watch(['src/**/*.{js,css}', 'demo/**/*.{js,css,html}'], ['server:livereload']);
     gulp.watch('src/**/*.scss', ['compile:styles']);
 
+});
+gulp.task('util:replace:disthtml', function () {
+    var js = ['dist/js/ngSlider.min.js'],
+        css = ['dist/css/ngSlider.min.css'];
+
+    gulp.src(['demo/index.tpl'])
+        .pipe(replace('<!--SRC:JS-->', toIncludeTags(js, 'JS')))
+        .pipe(replace('<!--SRC:CSS-->', toIncludeTags(css, 'css')))
+        .pipe(rename({basename:'dist', extname: '.html'}))
+        .pipe(gulp.dest('demo'));
+});
+gulp.task('util:replace:sourcehtml', function () {
+    var js = ['src/js/ngSlider.module.js', 'src/js/ngSlider.directive.js', 'src/js/ngRanger.directive.js'],
+        css = ['src/css/ngSlider.css'];
+
+    gulp.src(['demo/index.tpl'])
+        .pipe(replace('<!--SRC:JS-->', toIncludeTags(js, 'JS')))
+        .pipe(replace('<!--SRC:CSS-->', toIncludeTags(css, 'css')))
+        .pipe(rename({basename:'source', extname: '.html'}))
+        .pipe(gulp.dest('demo'));
 });
 /********************************
  * Source Compiling
@@ -65,10 +103,6 @@ gulp.task('compile:styles', function () {
 /********************************
  * Builders
  *******************************/
-gulp.task('util:cleanup', function () {
-    gulp.src(['src/js/**/*.js', 'src/css/**/*.css', 'dist/**/*.{js,css}'], {read: false})
-        .pipe(rimraf());
-});
 gulp.task('build:sources', ['util:cleanup', 'compile:styles', 'compile:ts']);
 gulp.task('build:release', ['build:sources'], function () {
     gulp.src('src/**/*.css')
@@ -105,7 +139,7 @@ gulp.task('server:livereload', function () {
     gulp.src(['src/**/*.{js,css}', 'demo/**/*.{js,html}', 'dist/**/*.{js,css}'])
         .pipe(connect.reload());
 });
-gulp.task('serve:source', ['build:sources', 'util:watch'], function () {
+gulp.task('serve:source', ['util:replace:sourcehtml', 'build:sources', 'util:watch'], function () {
     connect.server({
         root: 'demo',
         port: 9000,
@@ -119,7 +153,7 @@ gulp.task('serve:source', ['build:sources', 'util:watch'], function () {
         fallback: 'demo/source.html'
     });
 });
-gulp.task('serve:dist', ['build:release'], function () {
+gulp.task('serve:dist', ['util:replace:disthtml', 'build:release'], function () {
     connect.server({
         root: 'demo',
         port: 9000,

@@ -4,14 +4,14 @@
     position: relative;
     line-height: 1;
     height: $slideHeight;
-
     .ng-slider-min-label,
     .ng-slider-max-label,
     .ng-slider-label {
         display: inline-block;
         position: absolute;
         top: 0px;
-
+        user-select: none;
+        cursor: default;
         color: #1a1a1a;
         white-space: nowrap;
         &:hover {
@@ -26,14 +26,17 @@
         background: $selectionColor;
         z-index: 1;
         position: absolute;
+        cursor: pointer;
         top: $slideHeight / 2;
         margin-top: ($handleSize/2) * -1;
+        transition: box-shadow 120ms ease-in-out;
         @extend %circleShape;
         &:hover {
             background: $selectionColor;
         }
         &:active, &.active {
             background: $selectionColor;
+            box-shadow: 0 0 0 10px rgba($selectionColor, .25);
         }
         &:before, &:after {
             content: '';
