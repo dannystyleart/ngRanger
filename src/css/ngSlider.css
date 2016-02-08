@@ -1,4 +1,4 @@
-[ng-slider] .ng-slider-handle, .ng-slider .ng-slider-handle {
+[ng-slider] [class^="ng-slider-handle"], .ng-slider [class^="ng-slider-handle"] {
   border-radius: 999px;
 }
 
@@ -7,6 +7,17 @@
   position: relative;
   line-height: 1;
   height: 61px;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+
+[ng-slider] *, .ng-slider * {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
 }
 
 [ng-slider] .ng-slider-min-label,
@@ -17,16 +28,12 @@
   display: inline-block;
   position: absolute;
   top: 0px;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
   cursor: default;
   color: #1a1a1a;
   white-space: nowrap;
 }
 
-[ng-slider] .ng-slider-handle, .ng-slider .ng-slider-handle {
+[ng-slider] [class^="ng-slider-handle"], .ng-slider [class^="ng-slider-handle"] {
   display: inline-block;
   height: 16px;
   width: 16px;
@@ -39,16 +46,16 @@
   transition: box-shadow 120ms ease-in-out;
 }
 
-[ng-slider] .ng-slider-handle:hover, .ng-slider .ng-slider-handle:hover {
+[ng-slider] [class^="ng-slider-handle"]:hover, .ng-slider [class^="ng-slider-handle"]:hover {
   background: #6495ED;
 }
 
-[ng-slider] .ng-slider-handle:active, [ng-slider] .ng-slider-handle.active, .ng-slider .ng-slider-handle:active, .ng-slider .ng-slider-handle.active {
+[ng-slider] [class^="ng-slider-handle"]:active, [ng-slider] [class^="ng-slider-handle"].active, .ng-slider [class^="ng-slider-handle"]:active, .ng-slider [class^="ng-slider-handle"].active {
   background: #6495ED;
   box-shadow: 0 0 0 10px rgba(100, 149, 237, 0.25);
 }
 
-[ng-slider] .ng-slider-handle:before, [ng-slider] .ng-slider-handle:after, .ng-slider .ng-slider-handle:before, .ng-slider .ng-slider-handle:after {
+[ng-slider] [class^="ng-slider-handle"]:before, [ng-slider] [class^="ng-slider-handle"]:after, .ng-slider [class^="ng-slider-handle"]:before, .ng-slider [class^="ng-slider-handle"]:after {
   content: '';
   display: table;
 }

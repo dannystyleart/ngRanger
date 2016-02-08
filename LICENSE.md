@@ -1,7 +1,7 @@
 The MIT License (MIT)
 =====================
 
-Copyright © 2016 Dániel Sebestyén
+Copyright © 2016 Daniel Sebestyen
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation

@@ -17,7 +17,7 @@ var gulp = require('gulp'),
  *******************************/
 var LICENCE, ABOUT, AUTOPREFIX_CONFIG;
 
-LICENCE = fs.readFileSync('LICENSE.md', 'utf-8');
+LICENCE = fs.readFileSync('LICENSE.md', 'UTF-8');
 
 ABOUT = '/**\r\n\r\n' +
     '@name       ngSlider AngularJS directives\r\n' +
@@ -57,7 +57,7 @@ gulp.task('util:cleanup', function () {
 });
 gulp.task('util:watch', function () {
     gulp.watch('src/ts/*.ts', ['compile:ts', 'server:livereload']);
-    gulp.watch(['src/**/*.{js,css}', 'demo/**/*.{js,css,html}'], ['server:livereload']);
+    gulp.watch(['src/**/*.{js,css}', 'demo/**/*.{js,css,tpl}'], ['server:livereload']);
     gulp.watch('src/**/*.scss', ['compile:styles']);
 
 });
@@ -140,6 +140,7 @@ gulp.task('server:livereload', function () {
         .pipe(connect.reload());
 });
 gulp.task('serve:source', ['util:replace:sourcehtml', 'build:sources', 'util:watch'], function () {
+    gulp.watch('demo/**/*.tpl', ['util:replace:sourcehtml']);
     connect.server({
         root: 'demo',
         port: 9000,

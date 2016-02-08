@@ -23,19 +23,24 @@
         $scope.sliderModel = 0;
         $scope.debugPane = 'HTML';
         $scope.translateFn = function (value) {
-
             return '$' + (value.toFixed(2));
+        };
 
+        $scope.onChange = function (model, value) {
+            Debugger.log('onChange callback(' + model + ', ' + value + ')')
         };
 
         $scope.setModel = function (value) {
             $scope.sliderModel = value;
         };
 
-        $scope.$on('ngSlider:stop', function (event, value) {
-            Debugger.log('ngSlider event: stop', 'ngSlider event argument: ', value)
+        $scope.$on('ngSlider:change', function (event, key, value) {
+            Debugger.log('ngSlider event: change', 'ngSlider model type: ', key, 'ngSlider model value: ', value)
         });
 
+        $scope.$on('ngSlider:rendered', function () {
+            Debugger.log('ngSlider event: rendered');
+        });
         $scope.toggleDebugPane = function (pane) {
             $scope.debugPane = pane;
         };

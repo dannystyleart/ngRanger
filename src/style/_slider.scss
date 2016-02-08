@@ -4,13 +4,16 @@
     position: relative;
     line-height: 1;
     height: $slideHeight;
+    user-select: none;
+    * {
+        user-select: none;
+    }
     .ng-slider-min-label,
     .ng-slider-max-label,
     .ng-slider-label {
         display: inline-block;
         position: absolute;
         top: 0px;
-        user-select: none;
         cursor: default;
         color: #1a1a1a;
         white-space: nowrap;
@@ -19,7 +22,7 @@
         }
     }
 
-    .ng-slider-handle {
+    [class^="ng-slider-handle"] {
         display: inline-block;
         height: $handleSize;
         width: $handleSize;
