@@ -241,12 +241,18 @@ var ngSliderComponents;
             this.onChange = angular.isDefined(this.$$attrs.onChange) && angular.isFunction(this.$$scope.onChange()) ? this.$$scope.onChange() : angular.noop;
             this.rangeMinVolume = angular.isDefined(this.$$attrs.rangeMinVolume) && parseInt(this.$$attrs.rangeMinVolume) > 0 ? parseInt(this.$$attrs.rangeMinVolume) : -1;
             this.rangeMaxVolume = angular.isDefined(this.$$attrs.rangeMaxVolume) && parseInt(this.$$attrs.rangeMaxVolume) > 0 ? parseInt(this.$$attrs.rangeMaxVolume) : -1;
-            if (angular.isDefined(this.$$attrs.rangeVolume) && angular.isString(this.$$attrs.rangeVolume) && this.$$attrs.rangeVolume.split(':').length === 2) {
+            if (angular.isDefined(this.$$attrs.rangeVolume) && angular.isString(this.$$attrs.rangeVolume)) {
                 var testRangeVolumes = this.$$attrs.rangeVolume.split(':');
-                this.rangeVolume[0] = (parseInt(testRangeVolumes[0]) > 0) ? parseInt(testRangeVolumes[0]) : -1;
-                this.rangeMinVolume = this.rangeVolume[0];
-                this.rangeVolume[1] = (parseInt(testRangeVolumes[1]) > 0) ? parseInt(testRangeVolumes[1]) : -1;
-                this.rangeMaxVolume = this.rangeVolume[1];
+                if (testRangeVolumes.length === 2) {
+                    this.rangeVolume[0] = (parseInt(testRangeVolumes[0]) > 0) ? parseInt(testRangeVolumes[0]) : -1;
+                    this.rangeMinVolume = this.rangeVolume[0];
+                    this.rangeVolume[1] = (parseInt(testRangeVolumes[1]) > 0) ? parseInt(testRangeVolumes[1]) : -1;
+                    this.rangeMaxVolume = this.rangeVolume[1];
+                }
+                else if (testRangeVolumes.length === 1) {
+                    this.rangeVolume[0] = (parseInt(testRangeVolumes[0]) > 0) ? parseInt(testRangeVolumes[0]) : -1;
+                    this.rangeMinVolume = this.rangeVolume[0];
+                }
             }
             else {
                 if (this.rangeMinVolume > 0) {
@@ -259,6 +265,15 @@ var ngSliderComponents;
             // Initialize model
             this.$$scope.model = angular.isNumber(this.$$scope.model) ? this.$$scope.model : this.minVal;
             this.$$scope.modelHigh = this.isRange && !angular.isNumber(this.$$scope.modelHigh) ? this.maxVal : this.$$scope.modelHigh;
+            if (this.isRange && this.rangeMinVolume > -1 && (this.$$scope.modelHigh - this.$$scope.model) < this.rangeMinVolume) {
+                this.$$scope.modelHigh = this.$$scope.model + this.rangeMinVolume;
+            }
+            else if (this.isRange && this.rangeMaxVolume > -1 && (this.$$scope.modelHigh - this.$$scope.model) > this.rangeMaxVolume) {
+                this.$$scope.modelHigh = this.$$scope.model + this.rangeMaxVolume;
+            }
+            else if (this.isRange && this.rangeMinVolume > -1 && this.rangeMaxVolume === -1) {
+                this.$$scope.modelHigh = this.$$scope.model + this.rangeMinVolume;
+            }
         };
         SliderDirective.prototype.render = function () {
             var _this = this;
@@ -466,7 +481,7 @@ var ngSliderComponents;
          * @param {jQLiteEvent} event
          */
         SliderDirective.prototype.onMove = function (handler, control, event) {
-            var eventX = this.eventX(event), sliderLeftOffset = this.sLeft, eventRelativeOffset = eventX - sliderLeftOffset - (this.handleWidth / 2), rangeMinVolume = this.rangeVolume[0] > -1 ? this.rangeVolume[0] : false, rangeMaxVolume = this.rangeVolume[1] > -1 ? this.rangeVolume[1] : false, newValue;
+            var eventX = this.eventX(event), sliderLeftOffset = this.sLeft, eventRelativeOffset = eventX - sliderLeftOffset - (this.handleWidth / 2), rangeMinVolume = this.rangeVolume[0] > -1 ? this.rangeVolume[0] : -1, rangeMaxVolume = this.rangeVolume[1] > -1 ? this.rangeVolume[1] : -1, newValue;
             newValue = this.roundValue(this.offsetToValue(eventRelativeOffset));
             if (eventRelativeOffset <= 0 || newValue <= 0) {
                 if (handler.sLeft !== 0) {
@@ -489,7 +504,66 @@ var ngSliderComponents;
                 return;
             }
             if (this.isRange) {
-                if (rangeMinVolume !== false && (Math.abs(this.$$scope['modelHigh']) - Math.abs(this.$$scope['model']) < rangeMinVolume)) {
+                var currentRangeVolume = (Math.abs(this.$$scope['modelHigh']) - Math.abs(this.$$scope['model'])), opponentValueWithRange;
+                if (rangeMinVolume > -1 && currentRangeVolume < rangeMinVolume) {
+                    if (control === 'model') {
+                        opponentValueWithRange = newValue + rangeMinVolume;
+                        if (opponentValueWithRange > this.maxVal) {
+                            return false;
+                        }
+                        else if (this.$$scope.modelHigh < this.maxVal) {
+                            this.$$scope.modelHigh = opponentValueWithRange;
+                        }
+                    }
+                    else {
+                        opponentValueWithRange = newValue - rangeMinVolume;
+                        if (opponentValueWithRange < this.minVal) {
+                            return false;
+                        }
+                        else if (this.$$scope.model > this.minVal) {
+                            this.$$scope.model = opponentValueWithRange;
+                        }
+                    }
+                }
+                else if (rangeMaxVolume > -1 && currentRangeVolume > rangeMaxVolume) {
+                    if (control === 'model') {
+                        opponentValueWithRange = newValue + rangeMaxVolume;
+                        if (opponentValueWithRange > this.maxVal) {
+                            return false;
+                        }
+                        else if (this.$$scope.modelHigh <= this.maxVal) {
+                            this.$$scope.modelHigh = opponentValueWithRange;
+                        }
+                    }
+                    else {
+                        opponentValueWithRange = newValue - rangeMaxVolume;
+                        if (opponentValueWithRange < this.minVal) {
+                            return false;
+                        }
+                        else if (this.$$scope.model >= this.minVal) {
+                            this.$$scope.model = opponentValueWithRange;
+                        }
+                    }
+                }
+                else if ((rangeMinVolume > -1 && rangeMaxVolume === -1)) {
+                    if (control === 'model') {
+                        opponentValueWithRange = newValue + rangeMinVolume;
+                        if (opponentValueWithRange > this.maxVal) {
+                            return false;
+                        }
+                        else {
+                            this.$$scope.modelHigh = opponentValueWithRange;
+                        }
+                    }
+                    else {
+                        opponentValueWithRange = newValue - rangeMinVolume;
+                        if (opponentValueWithRange < this.minVal) {
+                            return false;
+                        }
+                        else {
+                            this.$$scope.model = opponentValueWithRange;
+                        }
+                    }
                 }
             }
             /* @TODO EVADE OVERLAPING IN A BETTER WAY */
