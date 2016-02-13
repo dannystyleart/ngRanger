@@ -1,42 +1,43 @@
 /**
 
-@name       ngSlider AngularJS directives
-@author     Daniel Sebestyen <dannystyleart@gmail.com>
-@url        https://gitlab.com/dannystyleart/ng-slider
-@license    MIT
+ @name       ngSlider AngularJS directives
+ @author     Daniel Sebestyen <dannystyleart@gmail.com>
+ @url        https://gitlab.com/dannystyleart/ng-slider
+ @license    MIT
 
-The MIT License (MIT)
-=====================
+ The MIT License (MIT)
+ =====================
 
-Copyright © 2016 Daniel Sebestyen
+ Copyright © 2016 Daniel Sebestyen
 
-Permission is hereby granted, free of charge, to any person
-obtaining a copy of this software and associated documentation
-files (the “Software”), to deal in the Software without
-restriction, including without limitation the rights to use,
-copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the
-Software is furnished to do so, subject to the following
-conditions:
+ Permission is hereby granted, free of charge, to any person
+ obtaining a copy of this software and associated documentation
+ files (the “Software”), to deal in the Software without
+ restriction, including without limitation the rights to use,
+ copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the
+ Software is furnished to do so, subject to the following
+ conditions:
 
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
+ The above copyright notice and this permission notice shall be
+ included in all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-OTHER DEALINGS IN THE SOFTWARE.
-*/
+ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND,
+ EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ OTHER DEALINGS IN THE SOFTWARE.
+ */
 var ngSliderComponents;
 (function (ngSliderComponents) {
     'use strict';
     var SliderEvent = (function () {
         function SliderEvent() {
         }
+
         SliderEvent.onChange = "ngSlider:change";
         SliderEvent.forceRender = "ngSlider:forceRender";
         SliderEvent.renderDone = "ngSlider:rendered";
@@ -49,16 +50,17 @@ var ngSliderComponents;
             this.sLeft = 0;
             this.sWidth = this.width();
         }
+
         SlideElement.prototype.width = function () {
             return this.element[0].getBoundingClientRect().width;
         };
         SlideElement.prototype.hide = function () {
             this.isVisible = false;
-            this.element.css({ 'opacity': 0, 'visibility': 'hidden' });
+            this.element.css({'opacity': 0, 'visibility': 'hidden'});
         };
         SlideElement.prototype.show = function () {
             this.isVisible = true;
-            this.element.css({ 'opacity': 1, 'visibility': 'visible' });
+            this.element.css({'opacity': 1, 'visibility': 'visible'});
         };
         SlideElement.prototype.setContent = function (content) {
             this.element.html(content);
@@ -73,7 +75,7 @@ var ngSliderComponents;
             this.$window = $window;
             this.restrict = 'E';
             this.replace = true;
-            this.scope = { model: '=', modelHigh: '=', min: '=', max: '=', translateFn: '&', step: '=', precision: '=', onChange: '&' };
+            this.scope = {model: '=', modelHigh: '=', min: '=', max: '=', translateFn: '&', step: '=', precision: '=', onChange: '&'};
             this.template = '<div class="ng-slider">' +
                 '<span class="ng-slider-min-label"></span>' +
                 '<span class="ng-slider-max-label"></span>' +
@@ -189,6 +191,7 @@ var ngSliderComponents;
                 });
             };
         }
+
         /**
          * Translate function to translate given value to a label text
          * @param {number} value Value of given offset
@@ -607,10 +610,10 @@ var ngSliderComponents;
         SliderDirective.prototype.renderSelectionBar = function () {
             var selection = this.getSliderElement('SELECTION'), newOffset = this.valueToOffset(this.$$scope.model), newCss;
             if (!this.isRange) {
-                newCss = { 'width': newOffset + 'px' };
+                newCss = {'width': newOffset + 'px'};
             }
             else {
-                newCss = { 'left': newOffset + 'px', 'width': this.valueToOffset((this.$$scope.modelHigh - this.$$scope.model)) + 'px' };
+                newCss = {'left': newOffset + 'px', 'width': this.valueToOffset((this.$$scope.modelHigh - this.$$scope.model)) + 'px'};
             }
             selection.element.css(newCss);
         };
@@ -621,7 +624,7 @@ var ngSliderComponents;
          */
         SliderDirective.prototype.setLeft = function (sliderElement, offset) {
             sliderElement.sLeft = offset;
-            sliderElement.element.css({ 'left': offset + 'px' });
+            sliderElement.element.css({'left': offset + 'px'});
         };
         /**
          * Convert value to offset
