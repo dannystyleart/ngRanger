@@ -1,6 +1,6 @@
 /**
 
-@name       ngSlider AngularJS directives
+ @name       ngSlider AngularJS directive
 @author     Daniel Sebestyen <dannystyleart@gmail.com>
 @url        https://gitlab.com/dannystyleart/ng-slider
 @license    MIT

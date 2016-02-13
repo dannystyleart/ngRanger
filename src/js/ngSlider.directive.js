@@ -455,22 +455,17 @@ var ngSliderComponents;
                 this.renderSelectionBar();
                 return;
             }
-            /**
-             * @TODO: INCREASE / DECREASE MODELS BY RANGE VALUE VOLUMES
-             * - TAKE CARE OF VALUES OUT OF BOUND
-             * - PREVENT RENDERING WHEN INVALID RANGE WOULD RENDERED - PREVENTING FLASHES
-             */
             if (this.isRange) {
                 if (rangeMinVolume !== false && (Math.abs(this.$$scope['modelHigh']) - Math.abs(this.$$scope['model']) < rangeMinVolume)) {
                 }
             }
-            /* EVADE OVERLAPING
-             if (control === 'model' && this.$$scope[control] > this.$$scope.modelHigh) {
-             control = 'modelHigh';
-             } else if (control === 'modelHigh' && this.$$scope[control] < this.$$scope.model) {
-             control = 'model';
-             }
-             */
+            /* @TODO EVADE OVERLAPING IN A BETTER WAY */
+            if (control === 'model' && this.$$scope[control] > this.$$scope.modelHigh) {
+                control = 'modelHigh';
+            }
+            else if (control === 'modelHigh' && this.$$scope[control] < this.$$scope.model) {
+                control = 'model';
+            }
             handler.sVal = newValue;
             this.$$scope[control] = newValue;
             this.$$scope.$apply();
