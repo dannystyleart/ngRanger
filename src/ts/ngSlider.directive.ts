@@ -400,6 +400,9 @@ module ngSliderComponents {
                     case 8:
                         // cmbLab
                         var handlerLabel = new SlideElement(element, null);
+                        if (!this.isRange) {
+                            handlerLabel.hide();
+                        }
                         this.handles.push(handlerLabel);
                         handlerLabel.hide();
                         break;
@@ -547,101 +550,91 @@ module ngSliderComponents {
 
             newValue = this.roundValue(this.offsetToValue(eventRelativeOffset));
 
-            if (eventRelativeOffset <= 0 || newValue <= 0) {
-                if (handler.sLeft !== 0) {
-                    handler.sVal = 0;
-                    this.$$scope[control] = 0;
-                    this.$$scope.$apply();
-                    this.renderHandles();
-                    this.renderLabels();
-                    this.renderSelectionBar();
+            if (this.isRange) {
+
+                if (rangeMinVolume > -1) {
+                    if (control === 'model') {
+                        if (eventRelativeOffset <= this.valueToOffset(this.minVal)) {
+                            handler.sVal = this.minVal;
+                        } else if (eventRelativeOffset >= this.valueToOffset(this.maxVal - rangeMinVolume)) {
+                            handler.sVal = this.maxVal - rangeMinVolume;
+                        } else {
+                            if (newValue + rangeMinVolume >= this.$$scope.modelHigh) {
+                                this.$$scope.modelHigh = newValue + rangeMinVolume;
+                            }
+                            handler.sVal = newValue;
+                        }
+                    } else {
+                        if (eventRelativeOffset >= this.valueToOffset(this.maxVal)) {
+                            handler.sVal = this.maxVal;
+                        } else if (eventRelativeOffset <= this.valueToOffset(this.minVal + rangeMinVolume)) {
+                            handler.sVal = this.minVal + rangeMinVolume;
+                        } else {
+                            if (newValue - rangeMinVolume <= this.$$scope.model) {
+                                this.$$scope.model = newValue - rangeMinVolume;
+                            }
+                            handler.sVal = newValue;
+                        }
+                    }
                 }
 
-                return;
-            } else if (eventRelativeOffset > this.sMaxLeft || newValue > this.maxVal) {
+                if (rangeMinVolume === -1) {
+                    if (eventRelativeOffset <= this.valueToOffset(this.minVal)) {
+                        handler.sVal = this.minVal;
+                    } else if (eventRelativeOffset >= this.valueToOffset(this.maxVal)) {
+                        handler.sVal = this.maxVal;
+                    } else {
 
-                handler.sVal = this.maxVal;
-                this.$$scope[control] = this.maxVal;
+                        if (control === 'model') {
+                            if (eventRelativeOffset >= this.valueToOffset(this.$$scope.modelHigh)) {
+                                this.$$scope.modelHigh = newValue;
+                            } else if (eventRelativeOffset >= this.valueToOffset(this.maxVal)) {
+                                this.$$scope.modelHigh = this.maxVal;
+                                newValue = this.maxVal;
+                            }
+                            handler.sVal = newValue;
+
+                        } else {
+                            if (eventRelativeOffset <= this.valueToOffset(this.$$scope.model)) {
+                                this.$$scope.model = newValue;
+                            } else if (eventRelativeOffset <= this.valueToOffset(this.minVal)) {
+                                this.$$scope.model = this.minVal;
+                                newValue = this.minVal;
+                            }
+                            handler.sVal = newValue;
+                        }
+
+                    }
+                }
+
+                if (rangeMaxVolume > -1) {
+
+                    if (control === 'model') {
+                        if (this.$$scope.modelHigh - this.$$scope.model >= rangeMaxVolume) {
+                            this.$$scope.modelHigh = this.$$scope.model + rangeMaxVolume;
+                        }
+                    } else {
+                        if (this.$$scope.modelHigh - this.$$scope.model >= rangeMaxVolume) {
+                            this.$$scope.model = this.$$scope.modelHigh - rangeMaxVolume;
+                        }
+                    }
+
+                }
+
+                this.$$scope[control] = handler.sVal;
                 this.$$scope.$apply();
                 this.renderHandles();
                 this.renderLabels();
                 this.renderSelectionBar();
-                return;
+
+            } else {
+                handler.sVal = (eventRelativeOffset <= this.valueToOffset(this.minVal)) ? this.minVal : (eventRelativeOffset >= this.valueToOffset(this.maxVal) ? this.maxVal : newValue);
+                this.$$scope[control] = handler.sVal;
+                this.$$scope.$apply();
+                this.renderHandles();
+                this.renderLabels();
+                this.renderSelectionBar();
             }
-
-            if (this.isRange) {
-                var currentRangeVolume = (Math.abs(this.$$scope['modelHigh']) - Math.abs(this.$$scope['model'])),
-                    opponentValueWithRange;
-
-                if (rangeMinVolume > -1 && currentRangeVolume < rangeMinVolume) {
-
-                    if (control === 'model') {
-                        opponentValueWithRange = newValue + rangeMinVolume;
-                        if (opponentValueWithRange > this.maxVal) {
-                            return false;
-                        } else if (this.$$scope.modelHigh < this.maxVal) {
-                            this.$$scope.modelHigh = opponentValueWithRange;
-                        }
-                    } else {
-                        opponentValueWithRange = newValue - rangeMinVolume;
-                        if (opponentValueWithRange < this.minVal) {
-                            return false;
-                        } else if (this.$$scope.model > this.minVal) {
-                            this.$$scope.model = opponentValueWithRange;
-                        }
-                    }
-
-                } else if (rangeMaxVolume > -1 && currentRangeVolume > rangeMaxVolume) {
-                    if (control === 'model') {
-                        opponentValueWithRange = newValue + rangeMaxVolume;
-                        if (opponentValueWithRange > this.maxVal) {
-                            return false;
-                        } else if (this.$$scope.modelHigh <= this.maxVal) {
-                            this.$$scope.modelHigh = opponentValueWithRange;
-                        }
-                    } else {
-                        opponentValueWithRange = newValue - rangeMaxVolume;
-                        if (opponentValueWithRange < this.minVal) {
-                            return false;
-                        } else if (this.$$scope.model >= this.minVal) {
-                            this.$$scope.model = opponentValueWithRange;
-                        }
-                    }
-                } else if ((rangeMinVolume > -1 && rangeMaxVolume === -1)) {
-
-                    if (control === 'model') {
-                        opponentValueWithRange = newValue + rangeMinVolume;
-                        if (opponentValueWithRange > this.maxVal) {
-                            return false;
-                        } else {
-                            this.$$scope.modelHigh = opponentValueWithRange;
-                        }
-                    } else {
-                        opponentValueWithRange = newValue - rangeMinVolume;
-                        if (opponentValueWithRange < this.minVal) {
-                            return false;
-                        } else {
-                            this.$$scope.model = opponentValueWithRange;
-                        }
-                    }
-
-                }
-            }
-
-            /* @TODO EVADE OVERLAPING IN A BETTER WAY */
-            if (control === 'model' && this.$$scope[control] > this.$$scope.modelHigh) {
-                control = 'modelHigh';
-            } else if (control === 'modelHigh' && this.$$scope[control] < this.$$scope.model) {
-                control = 'model';
-            }
-
-            handler.sVal = newValue;
-            this.$$scope[control] = newValue;
-            this.$$scope.$apply();
-
-            this.renderHandles();
-            this.renderLabels();
-            this.renderSelectionBar();
 
         }
 
@@ -708,28 +701,32 @@ module ngSliderComponents {
                 minLab.show();
             }
 
-            if (loOffset + loLab.width() > maxOffset) {
+            if (loOffset + loLab.width() >= maxOffset) {
                 maxLab.hide();
                 loOffset = this.fullBarWidth - loLab.width();
             } else {
                 maxLab.show();
             }
 
-            if (hiOffset + hiLab.width() > maxOffset) {
-                maxLab.hide();
-                hiOffset = this.fullBarWidth - hiLab.width();
-            } else {
-                maxLab.show();
-            }
+            if (this.isRange) {
 
-            if (loOffset + loLab.width() > hiOffset) {
-                cmbLab.show();
-                loLab.hide();
-                hiLab.hide();
-            } else {
-                cmbLab.hide();
-                loLab.show();
-                hiLab.show();
+                if (hiOffset + hiLab.width() > maxOffset) {
+                    maxLab.hide();
+                    hiOffset = this.fullBarWidth - hiLab.width();
+                } else {
+                    maxLab.show();
+                }
+
+                if (loOffset + loLab.width() > hiOffset) {
+                    cmbLab.show();
+                    loLab.hide();
+                    hiLab.hide();
+                } else {
+                    cmbLab.hide();
+                    loLab.show();
+                    hiLab.show();
+                }
+
             }
 
             if (cmbLab.isVisible) {
