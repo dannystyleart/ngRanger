@@ -1,10 +1,15 @@
 $handleSize: 16px;
-$slideHeight: $handleSize + 45px;
+$slideHeight: $handleSize + 46px;
 $barHeight: 2px;
 $handleTopOffset: (($handleSize + $barHeight) / 2) * -1;
 $selectionColor: #6495ED;
 %circleShape {
     border-radius: 999px;
+}
+
+%noUserSelect {
+    // Preventing touchedevices to start text selection or context menu
+    user-select: none;
 }
 
 [ng-slider], .ng-slider {
@@ -13,15 +18,15 @@ $selectionColor: #6495ED;
     position: relative;
     line-height: 1;
     height: $slideHeight;
-    user-select: none;
+    @extend %noUserSelect;
     * {
-        user-select: none;
+        @extend %noUserSelect;
     }
     .ng-slider-min-label,
     .ng-slider-max-label,
     .ng-slider-label-low,
     .ng-slider-label-high,
-    .ng-slider-label-cmb{
+    .ng-slider-label-cmb {
         display: inline-block;
         position: absolute;
         top: 0px;
@@ -32,7 +37,6 @@ $selectionColor: #6495ED;
 
         }
     }
-
     [class^="ng-slider-handle"] {
         display: inline-block;
         height: $handleSize;
@@ -57,7 +61,6 @@ $selectionColor: #6495ED;
             display: table;
         }
     }
-
     .ng-slider-fullbar {
         display: block;
         height: $barHeight;

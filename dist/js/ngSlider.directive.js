@@ -1,43 +1,42 @@
 /**
 
- @name       ngSlider AngularJS directives
- @author     Daniel Sebestyen <dannystyleart@gmail.com>
- @url        https://gitlab.com/dannystyleart/ng-slider
- @license    MIT
+ @name       ngSlider AngularJS directive
+@author     Daniel Sebestyen <dannystyleart@gmail.com>
+@url        https://gitlab.com/dannystyleart/ng-slider
+@license    MIT
 
- The MIT License (MIT)
- =====================
+The MIT License (MIT)
+=====================
 
- Copyright © 2016 Daniel Sebestyen
+Copyright © 2016 Daniel Sebestyen
 
- Permission is hereby granted, free of charge, to any person
- obtaining a copy of this software and associated documentation
- files (the “Software”), to deal in the Software without
- restriction, including without limitation the rights to use,
- copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the
- Software is furnished to do so, subject to the following
- conditions:
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the “Software”), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
 
- The above copyright notice and this permission notice shall be
- included in all copies or substantial portions of the Software.
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
 
- THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND,
- EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
- OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
- HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- OTHER DEALINGS IN THE SOFTWARE.
- */
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+*/
 var ngSliderComponents;
 (function (ngSliderComponents) {
     'use strict';
     var SliderEvent = (function () {
         function SliderEvent() {
         }
-
         SliderEvent.onChange = "ngSlider:change";
         SliderEvent.forceRender = "ngSlider:forceRender";
         SliderEvent.renderDone = "ngSlider:rendered";
@@ -50,17 +49,16 @@ var ngSliderComponents;
             this.sLeft = 0;
             this.sWidth = this.width();
         }
-
         SlideElement.prototype.width = function () {
             return this.element[0].getBoundingClientRect().width;
         };
         SlideElement.prototype.hide = function () {
             this.isVisible = false;
-            this.element.css({'opacity': 0, 'visibility': 'hidden'});
+            this.element.css({ 'opacity': 0, 'visibility': 'hidden' });
         };
         SlideElement.prototype.show = function () {
             this.isVisible = true;
-            this.element.css({'opacity': 1, 'visibility': 'visible'});
+            this.element.css({ 'opacity': 1, 'visibility': 'visible' });
         };
         SlideElement.prototype.setContent = function (content) {
             this.element.html(content);
@@ -75,7 +73,7 @@ var ngSliderComponents;
             this.$window = $window;
             this.restrict = 'E';
             this.replace = true;
-            this.scope = {model: '=', modelHigh: '=', min: '=', max: '=', translateFn: '&', step: '=', precision: '=', onChange: '&'};
+            this.scope = { model: '=', modelHigh: '=', min: '=', max: '=', translateFn: '&', step: '=', precision: '=', onChange: '&' };
             this.template = '<div class="ng-slider">' +
                 '<span class="ng-slider-min-label"></span>' +
                 '<span class="ng-slider-max-label"></span>' +
@@ -191,7 +189,6 @@ var ngSliderComponents;
                 });
             };
         }
-
         /**
          * Translate function to translate given value to a label text
          * @param {number} value Value of given offset
@@ -244,12 +241,18 @@ var ngSliderComponents;
             this.onChange = angular.isDefined(this.$$attrs.onChange) && angular.isFunction(this.$$scope.onChange()) ? this.$$scope.onChange() : angular.noop;
             this.rangeMinVolume = angular.isDefined(this.$$attrs.rangeMinVolume) && parseInt(this.$$attrs.rangeMinVolume) > 0 ? parseInt(this.$$attrs.rangeMinVolume) : -1;
             this.rangeMaxVolume = angular.isDefined(this.$$attrs.rangeMaxVolume) && parseInt(this.$$attrs.rangeMaxVolume) > 0 ? parseInt(this.$$attrs.rangeMaxVolume) : -1;
-            if (angular.isDefined(this.$$attrs.rangeVolume) && angular.isString(this.$$attrs.rangeVolume) && this.$$attrs.rangeVolume.split(':').length === 2) {
+            if (angular.isDefined(this.$$attrs.rangeVolume) && angular.isString(this.$$attrs.rangeVolume)) {
                 var testRangeVolumes = this.$$attrs.rangeVolume.split(':');
-                this.rangeVolume[0] = (parseInt(testRangeVolumes[0]) > 0) ? parseInt(testRangeVolumes[0]) : -1;
-                this.rangeMinVolume = this.rangeVolume[0];
-                this.rangeVolume[1] = (parseInt(testRangeVolumes[1]) > 0) ? parseInt(testRangeVolumes[1]) : -1;
-                this.rangeMaxVolume = this.rangeVolume[1];
+                if (testRangeVolumes.length === 2) {
+                    this.rangeVolume[0] = (parseInt(testRangeVolumes[0]) > 0) ? parseInt(testRangeVolumes[0]) : -1;
+                    this.rangeMinVolume = this.rangeVolume[0];
+                    this.rangeVolume[1] = (parseInt(testRangeVolumes[1]) > 0) ? parseInt(testRangeVolumes[1]) : -1;
+                    this.rangeMaxVolume = this.rangeVolume[1];
+                }
+                else if (testRangeVolumes.length === 1) {
+                    this.rangeVolume[0] = (parseInt(testRangeVolumes[0]) > 0) ? parseInt(testRangeVolumes[0]) : -1;
+                    this.rangeMinVolume = this.rangeVolume[0];
+                }
             }
             else {
                 if (this.rangeMinVolume > 0) {
@@ -262,6 +265,15 @@ var ngSliderComponents;
             // Initialize model
             this.$$scope.model = angular.isNumber(this.$$scope.model) ? this.$$scope.model : this.minVal;
             this.$$scope.modelHigh = this.isRange && !angular.isNumber(this.$$scope.modelHigh) ? this.maxVal : this.$$scope.modelHigh;
+            if (this.isRange && this.rangeMinVolume > -1 && (this.$$scope.modelHigh - this.$$scope.model) < this.rangeMinVolume) {
+                this.$$scope.modelHigh = this.$$scope.model + this.rangeMinVolume;
+            }
+            else if (this.isRange && this.rangeMaxVolume > -1 && (this.$$scope.modelHigh - this.$$scope.model) > this.rangeMaxVolume) {
+                this.$$scope.modelHigh = this.$$scope.model + this.rangeMaxVolume;
+            }
+            else if (this.isRange && this.rangeMinVolume > -1 && this.rangeMaxVolume === -1) {
+                this.$$scope.modelHigh = this.$$scope.model + this.rangeMinVolume;
+            }
         };
         SliderDirective.prototype.render = function () {
             var _this = this;
@@ -345,6 +357,9 @@ var ngSliderComponents;
                     case 8:
                         // cmbLab
                         var handlerLabel = new SlideElement(element, null);
+                        if (!_this.isRange) {
+                            handlerLabel.hide();
+                        }
                         _this.handles.push(handlerLabel);
                         handlerLabel.hide();
                         break;
@@ -469,50 +484,95 @@ var ngSliderComponents;
          * @param {jQLiteEvent} event
          */
         SliderDirective.prototype.onMove = function (handler, control, event) {
-            var eventX = this.eventX(event), sliderLeftOffset = this.sLeft, eventRelativeOffset = eventX - sliderLeftOffset - (this.handleWidth / 2), rangeMinVolume = this.rangeVolume[0] > -1 ? this.rangeVolume[0] : false, rangeMaxVolume = this.rangeVolume[1] > -1 ? this.rangeVolume[1] : false, newValue;
+            var eventX = this.eventX(event), sliderLeftOffset = this.sLeft, eventRelativeOffset = eventX - sliderLeftOffset - (this.handleWidth / 2), rangeMinVolume = this.rangeVolume[0] > -1 ? this.rangeVolume[0] : -1, rangeMaxVolume = this.rangeVolume[1] > -1 ? this.rangeVolume[1] : -1, newValue;
             newValue = this.roundValue(this.offsetToValue(eventRelativeOffset));
-            if (eventRelativeOffset <= 0 || newValue <= 0) {
-                if (handler.sLeft !== 0) {
-                    handler.sVal = 0;
-                    this.$$scope[control] = 0;
-                    this.$$scope.$apply();
-                    this.renderHandles();
-                    this.renderLabels();
-                    this.renderSelectionBar();
+            if (this.isRange) {
+                if (rangeMinVolume > -1) {
+                    if (control === 'model') {
+                        if (eventRelativeOffset <= this.valueToOffset(this.minVal)) {
+                            handler.sVal = this.minVal;
+                        }
+                        else if (eventRelativeOffset >= this.valueToOffset(this.maxVal - rangeMinVolume)) {
+                            handler.sVal = this.maxVal - rangeMinVolume;
+                        }
+                        else {
+                            if (newValue + rangeMinVolume >= this.$$scope.modelHigh) {
+                                this.$$scope.modelHigh = newValue + rangeMinVolume;
+                            }
+                            handler.sVal = newValue;
+                        }
+                    }
+                    else {
+                        if (eventRelativeOffset >= this.valueToOffset(this.maxVal)) {
+                            handler.sVal = this.maxVal;
+                        }
+                        else if (eventRelativeOffset <= this.valueToOffset(this.minVal + rangeMinVolume)) {
+                            handler.sVal = this.minVal + rangeMinVolume;
+                        }
+                        else {
+                            if (newValue - rangeMinVolume <= this.$$scope.model) {
+                                this.$$scope.model = newValue - rangeMinVolume;
+                            }
+                            handler.sVal = newValue;
+                        }
+                    }
                 }
-                return;
-            }
-            else if (eventRelativeOffset > this.sMaxLeft || newValue > this.maxVal) {
-                handler.sVal = this.maxVal;
-                this.$$scope[control] = this.maxVal;
+                if (rangeMinVolume === -1) {
+                    if (eventRelativeOffset <= this.valueToOffset(this.minVal)) {
+                        handler.sVal = this.minVal;
+                    }
+                    else if (eventRelativeOffset >= this.valueToOffset(this.maxVal)) {
+                        handler.sVal = this.maxVal;
+                    }
+                    else {
+                        if (control === 'model') {
+                            if (eventRelativeOffset >= this.valueToOffset(this.$$scope.modelHigh)) {
+                                this.$$scope.modelHigh = newValue;
+                            }
+                            else if (eventRelativeOffset >= this.valueToOffset(this.maxVal)) {
+                                this.$$scope.modelHigh = this.maxVal;
+                                newValue = this.maxVal;
+                            }
+                            handler.sVal = newValue;
+                        }
+                        else {
+                            if (eventRelativeOffset <= this.valueToOffset(this.$$scope.model)) {
+                                this.$$scope.model = newValue;
+                            }
+                            else if (eventRelativeOffset <= this.valueToOffset(this.minVal)) {
+                                this.$$scope.model = this.minVal;
+                                newValue = this.minVal;
+                            }
+                            handler.sVal = newValue;
+                        }
+                    }
+                }
+                if (rangeMaxVolume > -1) {
+                    if (control === 'model') {
+                        if (this.$$scope.modelHigh - this.$$scope.model >= rangeMaxVolume) {
+                            this.$$scope.modelHigh = this.$$scope.model + rangeMaxVolume;
+                        }
+                    }
+                    else {
+                        if (this.$$scope.modelHigh - this.$$scope.model >= rangeMaxVolume) {
+                            this.$$scope.model = this.$$scope.modelHigh - rangeMaxVolume;
+                        }
+                    }
+                }
+                this.$$scope[control] = handler.sVal;
                 this.$$scope.$apply();
                 this.renderHandles();
                 this.renderLabels();
                 this.renderSelectionBar();
-                return;
             }
-            /**
-             * @TODO: INCREASE / DECREASE MODELS BY RANGE VALUE VOLUMES
-             * - TAKE CARE OF VALUES OUT OF BOUND
-             * - PREVENT RENDERING WHEN INVALID RANGE WOULD RENDERED - PREVENTING FLASHES
-             */
-            if (this.isRange) {
-                if (rangeMinVolume !== false && (Math.abs(this.$$scope['modelHigh']) - Math.abs(this.$$scope['model']) < rangeMinVolume)) {
-                }
+            else {
+                handler.sVal = (eventRelativeOffset <= this.valueToOffset(this.minVal)) ? this.minVal : (eventRelativeOffset >= this.valueToOffset(this.maxVal) ? this.maxVal : newValue);
+                this.$$scope[control] = handler.sVal;
+                this.$$scope.$apply();
+                this.renderHandles();
+                this.renderLabels();
+                this.renderSelectionBar();
             }
-            /* EVADE OVERLAPING
-             if (control === 'model' && this.$$scope[control] > this.$$scope.modelHigh) {
-             control = 'modelHigh';
-             } else if (control === 'modelHigh' && this.$$scope[control] < this.$$scope.model) {
-             control = 'model';
-             }
-             */
-            handler.sVal = newValue;
-            this.$$scope[control] = newValue;
-            this.$$scope.$apply();
-            this.renderHandles();
-            this.renderLabels();
-            this.renderSelectionBar();
         };
         /**
          * Event handler for event fired on mouseup and touchstop events
@@ -562,29 +622,31 @@ var ngSliderComponents;
             else {
                 minLab.show();
             }
-            if (loOffset + loLab.width() > maxOffset) {
+            if (loOffset + loLab.width() >= maxOffset) {
                 maxLab.hide();
                 loOffset = this.fullBarWidth - loLab.width();
             }
             else {
                 maxLab.show();
             }
-            if (hiOffset + hiLab.width() > maxOffset) {
-                maxLab.hide();
-                hiOffset = this.fullBarWidth - hiLab.width();
-            }
-            else {
-                maxLab.show();
-            }
-            if (loOffset + loLab.width() > hiOffset) {
-                cmbLab.show();
-                loLab.hide();
-                hiLab.hide();
-            }
-            else {
-                cmbLab.hide();
-                loLab.show();
-                hiLab.show();
+            if (this.isRange) {
+                if (hiOffset + hiLab.width() > maxOffset) {
+                    maxLab.hide();
+                    hiOffset = this.fullBarWidth - hiLab.width();
+                }
+                else {
+                    maxLab.show();
+                }
+                if (loOffset + loLab.width() > hiOffset) {
+                    cmbLab.show();
+                    loLab.hide();
+                    hiLab.hide();
+                }
+                else {
+                    cmbLab.hide();
+                    loLab.show();
+                    hiLab.show();
+                }
             }
             if (cmbLab.isVisible) {
                 if (cmbOffset < minOffset) {
@@ -610,10 +672,10 @@ var ngSliderComponents;
         SliderDirective.prototype.renderSelectionBar = function () {
             var selection = this.getSliderElement('SELECTION'), newOffset = this.valueToOffset(this.$$scope.model), newCss;
             if (!this.isRange) {
-                newCss = {'width': newOffset + 'px'};
+                newCss = { 'width': newOffset + 'px' };
             }
             else {
-                newCss = {'left': newOffset + 'px', 'width': this.valueToOffset((this.$$scope.modelHigh - this.$$scope.model)) + 'px'};
+                newCss = { 'left': newOffset + 'px', 'width': this.valueToOffset((this.$$scope.modelHigh - this.$$scope.model)) + 'px' };
             }
             selection.element.css(newCss);
         };
@@ -624,7 +686,7 @@ var ngSliderComponents;
          */
         SliderDirective.prototype.setLeft = function (sliderElement, offset) {
             sliderElement.sLeft = offset;
-            sliderElement.element.css({'left': offset + 'px'});
+            sliderElement.element.css({ 'left': offset + 'px' });
         };
         /**
          * Convert value to offset

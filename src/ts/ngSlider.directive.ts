@@ -3,11 +3,6 @@ module ngSliderComponents {
     /**
      * @TODO:
      * Solve singleton problem -> ngSlider class instantiates only once so the link function will be applied only on the last directive
-     *
-     * Combo label ( when high handle & min handle's label is too near )
-     * RangeMinVolume (optional)
-     * RangeMaxVolume (optional)
-     * RangeVolume (excludes min and max volume)
      */
 
     export interface INgSliderScope extends ng.IScope {
@@ -284,12 +279,17 @@ module ngSliderComponents {
             this.rangeMinVolume = angular.isDefined(this.$$attrs.rangeMinVolume) && parseInt(this.$$attrs.rangeMinVolume) > 0 ? parseInt(this.$$attrs.rangeMinVolume) : -1;
             this.rangeMaxVolume = angular.isDefined(this.$$attrs.rangeMaxVolume) && parseInt(this.$$attrs.rangeMaxVolume) > 0 ? parseInt(this.$$attrs.rangeMaxVolume) : -1;
 
-            if (angular.isDefined(this.$$attrs.rangeVolume) && angular.isString(this.$$attrs.rangeVolume) && this.$$attrs.rangeVolume.split(':').length === 2) {
+            if (angular.isDefined(this.$$attrs.rangeVolume) && angular.isString(this.$$attrs.rangeVolume)) {
                 var testRangeVolumes = this.$$attrs.rangeVolume.split(':');
-                this.rangeVolume[0] = (parseInt(testRangeVolumes[0]) > 0) ? parseInt(testRangeVolumes[0]) : -1;
-                this.rangeMinVolume = this.rangeVolume[0];
-                this.rangeVolume[1] = (parseInt(testRangeVolumes[1]) > 0) ? parseInt(testRangeVolumes[1]) : -1;
-                this.rangeMaxVolume = this.rangeVolume[1];
+                if (testRangeVolumes.length === 2) {
+                    this.rangeVolume[0] = (parseInt(testRangeVolumes[0]) > 0) ? parseInt(testRangeVolumes[0]) : -1;
+                    this.rangeMinVolume = this.rangeVolume[0];
+                    this.rangeVolume[1] = (parseInt(testRangeVolumes[1]) > 0) ? parseInt(testRangeVolumes[1]) : -1;
+                    this.rangeMaxVolume = this.rangeVolume[1];
+                } else if (testRangeVolumes.length === 1) {
+                    this.rangeVolume[0] = (parseInt(testRangeVolumes[0]) > 0) ? parseInt(testRangeVolumes[0]) : -1;
+                    this.rangeMinVolume = this.rangeVolume[0];
+                }
             } else {
 
                 if (this.rangeMinVolume > 0) {
@@ -300,10 +300,18 @@ module ngSliderComponents {
                 }
             }
 
-
             // Initialize model
             this.$$scope.model = angular.isNumber(this.$$scope.model) ? this.$$scope.model : this.minVal;
             this.$$scope.modelHigh = this.isRange && !angular.isNumber(this.$$scope.modelHigh) ? this.maxVal : this.$$scope.modelHigh;
+
+            if (this.isRange && this.rangeMinVolume > -1 && (this.$$scope.modelHigh - this.$$scope.model) < this.rangeMinVolume) {
+                this.$$scope.modelHigh = this.$$scope.model + this.rangeMinVolume;
+            } else if (this.isRange && this.rangeMaxVolume > -1 && (this.$$scope.modelHigh - this.$$scope.model) > this.rangeMaxVolume) {
+                this.$$scope.modelHigh = this.$$scope.model + this.rangeMaxVolume;
+            } else if (this.isRange && this.rangeMinVolume > -1 && this.rangeMaxVolume === -1) {
+                this.$$scope.modelHigh = this.$$scope.model + this.rangeMinVolume;
+            }
+
 
         }
 
@@ -392,6 +400,9 @@ module ngSliderComponents {
                     case 8:
                         // cmbLab
                         var handlerLabel = new SlideElement(element, null);
+                        if (!this.isRange) {
+                            handlerLabel.hide();
+                        }
                         this.handles.push(handlerLabel);
                         handlerLabel.hide();
                         break;
@@ -533,63 +544,97 @@ module ngSliderComponents {
             var eventX = this.eventX(event),
                 sliderLeftOffset = this.sLeft,
                 eventRelativeOffset = eventX - sliderLeftOffset - (this.handleWidth / 2),
-                rangeMinVolume = this.rangeVolume[0] > -1 ? this.rangeVolume[0] : false,
-                rangeMaxVolume = this.rangeVolume[1] > -1 ? this.rangeVolume[1] : false,
+                rangeMinVolume = this.rangeVolume[0] > -1 ? this.rangeVolume[0] : -1,
+                rangeMaxVolume = this.rangeVolume[1] > -1 ? this.rangeVolume[1] : -1,
                 newValue;
 
             newValue = this.roundValue(this.offsetToValue(eventRelativeOffset));
 
-            if (eventRelativeOffset <= 0 || newValue <= 0) {
-                if (handler.sLeft !== 0) {
-                    handler.sVal = 0;
-                    this.$$scope[control] = 0;
-                    this.$$scope.$apply();
-                    this.renderHandles();
-                    this.renderLabels();
-                    this.renderSelectionBar();
+            if (this.isRange) {
+
+                if (rangeMinVolume > -1) {
+                    if (control === 'model') {
+                        if (eventRelativeOffset <= this.valueToOffset(this.minVal)) {
+                            handler.sVal = this.minVal;
+                        } else if (eventRelativeOffset >= this.valueToOffset(this.maxVal - rangeMinVolume)) {
+                            handler.sVal = this.maxVal - rangeMinVolume;
+                        } else {
+                            if (newValue + rangeMinVolume >= this.$$scope.modelHigh) {
+                                this.$$scope.modelHigh = newValue + rangeMinVolume;
+                            }
+                            handler.sVal = newValue;
+                        }
+                    } else {
+                        if (eventRelativeOffset >= this.valueToOffset(this.maxVal)) {
+                            handler.sVal = this.maxVal;
+                        } else if (eventRelativeOffset <= this.valueToOffset(this.minVal + rangeMinVolume)) {
+                            handler.sVal = this.minVal + rangeMinVolume;
+                        } else {
+                            if (newValue - rangeMinVolume <= this.$$scope.model) {
+                                this.$$scope.model = newValue - rangeMinVolume;
+                            }
+                            handler.sVal = newValue;
+                        }
+                    }
                 }
 
-                return;
-            } else if (eventRelativeOffset > this.sMaxLeft || newValue > this.maxVal) {
+                if (rangeMinVolume === -1) {
+                    if (eventRelativeOffset <= this.valueToOffset(this.minVal)) {
+                        handler.sVal = this.minVal;
+                    } else if (eventRelativeOffset >= this.valueToOffset(this.maxVal)) {
+                        handler.sVal = this.maxVal;
+                    } else {
 
-                handler.sVal = this.maxVal;
-                this.$$scope[control] = this.maxVal;
+                        if (control === 'model') {
+                            if (eventRelativeOffset >= this.valueToOffset(this.$$scope.modelHigh)) {
+                                this.$$scope.modelHigh = newValue;
+                            } else if (eventRelativeOffset >= this.valueToOffset(this.maxVal)) {
+                                this.$$scope.modelHigh = this.maxVal;
+                                newValue = this.maxVal;
+                            }
+                            handler.sVal = newValue;
+
+                        } else {
+                            if (eventRelativeOffset <= this.valueToOffset(this.$$scope.model)) {
+                                this.$$scope.model = newValue;
+                            } else if (eventRelativeOffset <= this.valueToOffset(this.minVal)) {
+                                this.$$scope.model = this.minVal;
+                                newValue = this.minVal;
+                            }
+                            handler.sVal = newValue;
+                        }
+
+                    }
+                }
+
+                if (rangeMaxVolume > -1) {
+
+                    if (control === 'model') {
+                        if (this.$$scope.modelHigh - this.$$scope.model >= rangeMaxVolume) {
+                            this.$$scope.modelHigh = this.$$scope.model + rangeMaxVolume;
+                        }
+                    } else {
+                        if (this.$$scope.modelHigh - this.$$scope.model >= rangeMaxVolume) {
+                            this.$$scope.model = this.$$scope.modelHigh - rangeMaxVolume;
+                        }
+                    }
+
+                }
+
+                this.$$scope[control] = handler.sVal;
                 this.$$scope.$apply();
                 this.renderHandles();
                 this.renderLabels();
                 this.renderSelectionBar();
-                return;
+
+            } else {
+                handler.sVal = (eventRelativeOffset <= this.valueToOffset(this.minVal)) ? this.minVal : (eventRelativeOffset >= this.valueToOffset(this.maxVal) ? this.maxVal : newValue);
+                this.$$scope[control] = handler.sVal;
+                this.$$scope.$apply();
+                this.renderHandles();
+                this.renderLabels();
+                this.renderSelectionBar();
             }
-
-            /**
-             * @TODO: INCREASE / DECREASE MODELS BY RANGE VALUE VOLUMES
-             * - TAKE CARE OF VALUES OUT OF BOUND
-             * - PREVENT RENDERING WHEN INVALID RANGE WOULD RENDERED - PREVENTING FLASHES
-             */
-            if (this.isRange) {
-                if (rangeMinVolume !== false && (Math.abs(this.$$scope['modelHigh']) - Math.abs(this.$$scope['model']) < rangeMinVolume)) {
-
-
-
-                }
-            }
-
-
-            /* EVADE OVERLAPING
-             if (control === 'model' && this.$$scope[control] > this.$$scope.modelHigh) {
-             control = 'modelHigh';
-             } else if (control === 'modelHigh' && this.$$scope[control] < this.$$scope.model) {
-             control = 'model';
-             }
-             */
-
-            handler.sVal = newValue;
-            this.$$scope[control] = newValue;
-            this.$$scope.$apply();
-
-            this.renderHandles();
-            this.renderLabels();
-            this.renderSelectionBar();
 
         }
 
@@ -656,28 +701,32 @@ module ngSliderComponents {
                 minLab.show();
             }
 
-            if (loOffset + loLab.width() > maxOffset) {
+            if (loOffset + loLab.width() >= maxOffset) {
                 maxLab.hide();
                 loOffset = this.fullBarWidth - loLab.width();
             } else {
                 maxLab.show();
             }
 
-            if (hiOffset + hiLab.width() > maxOffset) {
-                maxLab.hide();
-                hiOffset = this.fullBarWidth - hiLab.width();
-            } else {
-                maxLab.show();
-            }
+            if (this.isRange) {
 
-            if (loOffset + loLab.width() > hiOffset) {
-                cmbLab.show();
-                loLab.hide();
-                hiLab.hide();
-            } else {
-                cmbLab.hide();
-                loLab.show();
-                hiLab.show();
+                if (hiOffset + hiLab.width() > maxOffset) {
+                    maxLab.hide();
+                    hiOffset = this.fullBarWidth - hiLab.width();
+                } else {
+                    maxLab.show();
+                }
+
+                if (loOffset + loLab.width() > hiOffset) {
+                    cmbLab.show();
+                    loLab.hide();
+                    hiLab.hide();
+                } else {
+                    cmbLab.hide();
+                    loLab.show();
+                    hiLab.show();
+                }
+
             }
 
             if (cmbLab.isVisible) {
@@ -719,7 +768,6 @@ module ngSliderComponents {
 
             selection.element.css(newCss);
         }
-
 
         /**
          * Set left offset of slider element

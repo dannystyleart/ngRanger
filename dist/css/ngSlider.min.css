@@ -1,6 +1,6 @@
 /**
 
-@name       ngSlider AngularJS directives
+@name       ngSlider AngularJS directive
 @author     Daniel Sebestyen <dannystyleart@gmail.com>
 @url        https://gitlab.com/dannystyleart/ng-slider
 @license    MIT
@@ -31,22 +31,18 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 */
-.ng-slider, [ng-slider] {
-    display: block;
-    position: relative;
-    line-height: 1;
-    height: 61px;
+.ng-slider, .ng-slider *, [ng-slider], [ng-slider] * {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none
 }
 
-.ng-slider *, [ng-slider] * {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none
+.ng-slider, [ng-slider] {
+    display: block;
+    position: relative;
+    line-height: 1;
+    height: 62px
 }
 
 .ng-slider .ng-slider-label-cmb, .ng-slider .ng-slider-label-high, .ng-slider .ng-slider-label-low, .ng-slider .ng-slider-max-label, .ng-slider .ng-slider-min-label, [ng-slider] .ng-slider-label-cmb, [ng-slider] .ng-slider-label-high, [ng-slider] .ng-slider-label-low, [ng-slider] .ng-slider-max-label, [ng-slider] .ng-slider-min-label {
@@ -67,7 +63,7 @@ OTHER DEALINGS IN THE SOFTWARE.
     z-index: 1;
     position: absolute;
     cursor: pointer;
-    top: 30.5px;
+    top: 31px;
     margin-top: -8px;
     transition: box-shadow 120ms ease-in-out
 }

@@ -1,3 +1,3 @@
-module ngSliderComponents{
+module ngSliderComponents {
     angular.module('ngSlider', []);
 }

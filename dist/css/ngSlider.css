@@ -1,6 +1,6 @@
 /**
 
-@name       ngSlider AngularJS directives
+@name       ngSlider AngularJS directive
 @author     Daniel Sebestyen <dannystyleart@gmail.com>
 @url        https://gitlab.com/dannystyleart/ng-slider
 @license    MIT
@@ -32,25 +32,21 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 */
 [ng-slider] [class^="ng-slider-handle"], .ng-slider [class^="ng-slider-handle"] {
-    border-radius: 999px;
+  border-radius: 999px;
+}
+
+[ng-slider], .ng-slider, [ng-slider] *, .ng-slider * {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
 }
 
 [ng-slider], .ng-slider {
-    display: block;
-    position: relative;
-    line-height: 1;
-    height: 61px;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
-[ng-slider] *, .ng-slider * {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+  display: block;
+  position: relative;
+  line-height: 1;
+  height: 62px;
 }
 
 [ng-slider] .ng-slider-min-label,
@@ -62,61 +58,61 @@ OTHER DEALINGS IN THE SOFTWARE.
 .ng-slider .ng-slider-label-low,
 .ng-slider .ng-slider-label-high,
 .ng-slider .ng-slider-label-cmb {
-    display: inline-block;
-    position: absolute;
-    top: 0px;
-    cursor: default;
-    color: #1a1a1a;
-    white-space: nowrap;
+  display: inline-block;
+  position: absolute;
+  top: 0px;
+  cursor: default;
+  color: #1a1a1a;
+  white-space: nowrap;
 }
 
 [ng-slider] [class^="ng-slider-handle"], .ng-slider [class^="ng-slider-handle"] {
-    display: inline-block;
-    height: 16px;
-    width: 16px;
-    background: #6495ED;
-    z-index: 1;
-    position: absolute;
-    cursor: pointer;
-    top: 30.5px;
-    margin-top: -8px;
-    transition: box-shadow 120ms ease-in-out;
+  display: inline-block;
+  height: 16px;
+  width: 16px;
+  background: #6495ED;
+  z-index: 1;
+  position: absolute;
+  cursor: pointer;
+  top: 31px;
+  margin-top: -8px;
+  transition: box-shadow 120ms ease-in-out;
 }
 
 [ng-slider] [class^="ng-slider-handle"]:hover, .ng-slider [class^="ng-slider-handle"]:hover {
-    background: #6495ED;
+  background: #6495ED;
 }
 
 [ng-slider] [class^="ng-slider-handle"]:active, [ng-slider] [class^="ng-slider-handle"].active, .ng-slider [class^="ng-slider-handle"]:active, .ng-slider [class^="ng-slider-handle"].active {
-    background: #6495ED;
-    box-shadow: 0 0 0 10px rgba(100, 149, 237, 0.25);
+  background: #6495ED;
+  box-shadow: 0 0 0 10px rgba(100, 149, 237, 0.25);
 }
 
 [ng-slider] [class^="ng-slider-handle"]:before, [ng-slider] [class^="ng-slider-handle"]:after, .ng-slider [class^="ng-slider-handle"]:before, .ng-slider [class^="ng-slider-handle"]:after {
-    content: '';
-    display: table;
+  content: '';
+  display: table;
 }
 
 [ng-slider] .ng-slider-fullbar, .ng-slider .ng-slider-fullbar {
-    display: block;
-    height: 2px;
-    width: 100%;
-    box-sizing: border-box;
-    background: #eeeeee;
-    position: absolute;
-    top: 50%;
-    -webkit-transform: translateY(-50%);
-    transform: translateY(-50%);
+  display: block;
+  height: 2px;
+  width: 100%;
+  box-sizing: border-box;
+  background: #eeeeee;
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
 }
 
 [ng-slider] .ng-slider-selection, .ng-slider .ng-slider-selection {
-    background: #6495ED;
-    pointer-events: none;
-    display: block;
-    height: 2px;
-    box-sizing: border-box;
-    position: absolute;
-    top: 50%;
-    -webkit-transform: translateY(-50%);
-    transform: translateY(-50%);
+  background: #6495ED;
+  pointer-events: none;
+  display: block;
+  height: 2px;
+  box-sizing: border-box;
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
 }

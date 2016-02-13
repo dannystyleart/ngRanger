@@ -20,7 +20,7 @@ var LICENCE, ABOUT, AUTOPREFIX_CONFIG;
 LICENCE = fs.readFileSync('LICENSE.md', 'UTF-8');
 
 ABOUT = '/**\r\n\r\n' +
-    '@name       ngSlider AngularJS directives\r\n' +
+    '@name       ngSlider AngularJS directive\r\n' +
     '@author     Daniel Sebestyen <dannystyleart@gmail.com>\r\n' +
     '@url        https://gitlab.com/dannystyleart/ng-slider\r\n' +
     '@license    MIT\r\n\r\n' +
@@ -72,7 +72,7 @@ gulp.task('util:replace:disthtml', function () {
         .pipe(gulp.dest('demo'));
 });
 gulp.task('util:replace:sourcehtml', function () {
-    var js = ['src/js/ngSlider.module.js', 'src/js/ngSlider.directive.js', 'src/js/ngRanger.directive.js'],
+    var js = ['src/js/ngSlider.module.js', 'src/js/ngSlider.directive.js'],
         css = ['src/css/ngSlider.css'];
 
     gulp.src(['demo/index.tpl'])
@@ -119,7 +119,7 @@ gulp.task('build:release', ['build:sources'], function () {
         .pipe(injectString.prepend(ABOUT))
         .pipe(gulp.dest('dist'));
 
-    gulp.src(['src/js/ngSlider.module.js', 'src/js/ngSlider.directive.js', 'src/js/ngRanger.directive.js'])
+    gulp.src(['src/js/ngSlider.module.js', 'src/js/ngSlider.directive.js'])
         .pipe(ngAnnotate())
         .pipe(uglify({
             mangle: false
