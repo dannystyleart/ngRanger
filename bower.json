@@ -1,7 +1,10 @@
 {
-  "name": "ng-slider",
-  "description": "AngularJS slider components",
-  "main": ["dist/js/ngSlider.min.js", "dist/css/ngSlider.min.css"],
+  "name": "ng-ranger",
+  "description": "AngularJS slider component written in typescript",
+  "main": [
+    "dist/js/ngRanger.min.js",
+    "dist/css/ngRanger.min.css"
+  ],
   "authors": [
     "Dániel Sebestyén"
   ],

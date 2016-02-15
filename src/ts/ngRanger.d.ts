@@ -1,7 +1,7 @@
 /// <reference path="../../bower_components/dt-angular/angular.d.ts"/>
 /// <reference path="../../bower_components/dt-jquery/jquery.d.ts"/>
 
-declare module ngSliderComponents {
+declare module ngRangerComponents {
 
     interface IHandler {
         element: ng.IAugmentedJQuery;

@@ -20,7 +20,7 @@ var LICENCE, ABOUT, AUTOPREFIX_CONFIG;
 LICENCE = fs.readFileSync('LICENSE.md', 'UTF-8');
 
 ABOUT = '/**\r\n\r\n' +
-    '@name       ngSlider AngularJS directive\r\n' +
+    '@name       ngRanger AngularJS directive\r\n' +
     '@author     Daniel Sebestyen <dannystyleart@gmail.com>\r\n' +
     '@url        https://gitlab.com/dannystyleart/ng-slider\r\n' +
     '@license    MIT\r\n\r\n' +
@@ -62,8 +62,8 @@ gulp.task('util:watch', function () {
 
 });
 gulp.task('util:replace:disthtml', function () {
-    var js = ['dist/js/ngSlider.min.js'],
-        css = ['dist/css/ngSlider.min.css'];
+    var js = ['dist/js/ngRanger.min.js'],
+        css = ['dist/css/ngRanger.min.css'];
 
     gulp.src(['demo/index.tpl'])
         .pipe(replace('<!--SRC:JS-->', toIncludeTags(js, 'JS')))
@@ -72,8 +72,8 @@ gulp.task('util:replace:disthtml', function () {
         .pipe(gulp.dest('demo'));
 });
 gulp.task('util:replace:sourcehtml', function () {
-    var js = ['src/js/ngSlider.module.js', 'src/js/ngSlider.directive.js'],
-        css = ['src/css/ngSlider.css'];
+    var js = ['src/js/ngRanger.module.js', 'src/js/ngRanger.directive.js'],
+        css = ['src/css/ngRanger.css'];
 
     gulp.src(['demo/index.tpl'])
         .pipe(replace('<!--SRC:JS-->', toIncludeTags(js, 'JS')))
@@ -119,14 +119,14 @@ gulp.task('build:release', ['build:sources'], function () {
         .pipe(injectString.prepend(ABOUT))
         .pipe(gulp.dest('dist'));
 
-    gulp.src(['src/js/ngSlider.module.js', 'src/js/ngSlider.directive.js'])
+    gulp.src(['src/js/ngRanger.module.js', 'src/js/ngRanger.directive.js'])
         .pipe(ngAnnotate())
         .pipe(uglify({
             mangle: false
         }))
         .pipe(injectString.prepend(ABOUT))
         .pipe(rename({
-            basename: 'ngSlider',
+            basename: 'ngRanger',
             suffix: '.min'
         }))
         .pipe(gulp.dest('dist/js'));

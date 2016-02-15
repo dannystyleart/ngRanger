@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    var demoApp = angular.module('app', ['ngSlider']);
+    var demoApp = angular.module('app', ['ngRanger']);
 
     var debuggerService = ['$window', function () {
         return {
@@ -20,7 +20,11 @@
 
         $scope.rangeMin = 0;
         $scope.rangeMax = 100;
-        $scope.sliderModel = 0;
+        $scope.sliderModel = 50;
+        $scope.rangeLow = 75;
+        $scope.rangeHigh = 125;
+        $scope.fixedRangeLow = 50;
+        $scope.fixedRangeHigh = 150;
         $scope.debugPane = 'HTML';
         $scope.translateFn = function (value) {
             return '$' + (value.toFixed(2));
@@ -34,12 +38,12 @@
             $scope.sliderModel = value;
         };
 
-        $scope.$on('ngSlider:change', function (event, key, value) {
-            Debugger.log('ngSlider event: change', 'ngSlider model type: ', key, 'ngSlider model value: ', value)
+        $scope.$on('ngRanger:change', function (event, key, value) {
+            Debugger.log('ngRanger event: change', 'ngRanger model type: ', key, 'ngRanger model value: ', value)
         });
 
-        $scope.$on('ngSlider:rendered', function () {
-            Debugger.log('ngSlider event: rendered');
+        $scope.$on('ngRanger:rendered', function () {
+            Debugger.log('ngRanger event: rendered');
         });
         $scope.toggleDebugPane = function (pane) {
             $scope.debugPane = pane;
@@ -48,17 +52,5 @@
     }];
 
     demoApp.controller('SliderExampleController', SliderExampleController);
-
-
-    var RangerExampleController = ['$scope', function ($scope) {
-
-        $scope.rangeMin = 0;
-        $scope.rangeMax = 100;
-
-        $scope.sliderModel = 25;
-
-    }];
-
-    demoApp.controller('RangerExampleController', RangerExampleController);
 
 })();

@@ -1,5 +1,5 @@
 $handleSize: 16px;
-$slideHeight: $handleSize + 46px;
+$rangerInputHeight: $handleSize + 46px;
 $barHeight: 2px;
 $handleTopOffset: (($handleSize + $barHeight) / 2) * -1;
 $selectionColor: #6495ED;
@@ -12,21 +12,21 @@ $selectionColor: #6495ED;
     user-select: none;
 }
 
-[ng-slider], .ng-slider {
+[ng-ranger], .ng-ranger {
 
     display: block;
     position: relative;
     line-height: 1;
-    height: $slideHeight;
+    height: $rangerInputHeight;
     @extend %noUserSelect;
     * {
         @extend %noUserSelect;
     }
-    .ng-slider-min-label,
-    .ng-slider-max-label,
-    .ng-slider-label-low,
-    .ng-slider-label-high,
-    .ng-slider-label-cmb {
+    .ng-ranger-min-label,
+    .ng-ranger-max-label,
+    .ng-ranger-label-low,
+    .ng-ranger-label-high,
+    .ng-ranger-label-cmb {
         display: inline-block;
         position: absolute;
         top: 0px;
@@ -37,7 +37,7 @@ $selectionColor: #6495ED;
 
         }
     }
-    [class^="ng-slider-handle"] {
+    [class^="ng-ranger-handle"] {
         display: inline-block;
         height: $handleSize;
         width: $handleSize;
@@ -45,7 +45,7 @@ $selectionColor: #6495ED;
         z-index: 1;
         position: absolute;
         cursor: pointer;
-        top: $slideHeight / 2;
+        top: $rangerInputHeight / 2;
         margin-top: ($handleSize/2) * -1;
         transition: box-shadow 120ms ease-in-out;
         @extend %circleShape;
@@ -61,7 +61,7 @@ $selectionColor: #6495ED;
             display: table;
         }
     }
-    .ng-slider-fullbar {
+    .ng-ranger-fullbar {
         display: block;
         height: $barHeight;
         width: 100%;
@@ -71,7 +71,7 @@ $selectionColor: #6495ED;
         top: 50%;
         transform: translateY(-50%);
     }
-    .ng-slider-selection {
+    .ng-ranger-selection {
         background: $selectionColor;
         pointer-events: none;
         display: block;
