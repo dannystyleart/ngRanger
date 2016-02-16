@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>ngRanger by dannystyleart</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">ngRanger</h1>
+      <h2 class="project-tagline">AngularJS native slider, written in typesript</h2>
+      <a href="https://github.com/dannystyleart/ngRanger" class="btn">View on GitHub</a>
+      <a href="https://github.com/dannystyleart/ngRanger/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/dannystyleart/ngRanger/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="ngranger" class="anchor" href="#ngranger" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>ngRanger</h1>
+
+<p>This project is inspired by rzajac/angularjs-slider but written in typescript.</p>
+
+<h2>
+<a id="installion" class="anchor" href="#installion" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installion</h2>
+
+<p>To install this package you can use bower:</p>
+
+<pre><code>user@machine$:path/to/project~ bower install ng-ranger
+</code></pre>
+
+<p>Initialize the module 'ngRanger' into your application</p>
+
+<p>example <strong>app.js</strong></p>
+
+<pre><code>angular.module('app',['ngRanger'])
+</code></pre>
+
+<p>Now you are ready!</p>
+
+<h4>
+<a id="ngranger-1" class="anchor" href="#ngranger-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>ngRanger</h4>
+
+<p><strong>Usage:</strong></p>
+
+<p>Options:</p>
+
+<table>
+<thead>
+<tr>
+<th align="right">Option</th>
+<th align="center">Possible Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="right"><strong>min</strong></td>
+<td align="center">number</td>
+<td>Specifies the floor / lowest possible value</td>
+</tr>
+<tr>
+<td align="right"><strong>max</strong></td>
+<td align="center">number</td>
+<td>Specifies the ceil / highest possible value</td>
+</tr>
+<tr>
+<td align="right"><strong>model</strong></td>
+<td align="center">number/undefined</td>
+<td>Model of the slider</td>
+</tr>
+<tr>
+<td align="right"><strong>modelHigh</strong></td>
+<td align="center">number/undefined</td>
+<td>Higher Model of the slider</td>
+</tr>
+<tr>
+<td align="right"><strong>scroll</strong></td>
+<td align="center">attribute</td>
+<td>If attribute presented lower model will be scrollable</td>
+</tr>
+<tr>
+<td align="right"><strong>translateFn</strong></td>
+<td align="center">function</td>
+<td>A function to format values' label text</td>
+</tr>
+<tr>
+<td align="right"><strong>rangeMinVolume</strong></td>
+<td align="center">number</td>
+<td>Minimum values (distance) between low and high  model value</td>
+</tr>
+<tr>
+<td align="right"><strong>rangeMaxVolume</strong></td>
+<td align="center">number</td>
+<td>Maximum values (distance) between low and high  model value</td>
+</tr>
+<tr>
+<td align="right"><strong>rangeVolume</strong></td>
+<td align="center">string</td>
+<td>Combined distance in a format <em>'N:N'</em> e.g: <em>10:40 means the minimum distance is 10 and maximum is 40 between low and high values</em>
+</td>
+</tr>
+<tr>
+<td align="right"><strong>precision</strong></td>
+<td align="center">number</td>
+<td>length of .toFixed() when calculating round values. Useful when step is lower than 0</td>
+</tr>
+<tr>
+<td align="right"><strong>step</strong></td>
+<td align="center">number</td>
+<td>distance between 2 valid values on the range. e.g step = 2, the valid values on a 0-10 range: <em>0, 2, 4, 6, 8, 10</em>
+</td>
+</tr>
+</tbody>
+</table>
+
+<p><em>html</em></p>
+
+<pre><code>&lt;ng-ranger min="0" max="5" translate-fn="translateFn" model="mySliderModel"&gt;&lt;/ng-ranger&gt;
+</code></pre>
+
+<p><em>js</em></p>
+
+<pre><code>app.controller('MySingleCtrl', function($scope){
+    $scope.mySliderModel = 2;
+    $scope.translateFn = function(valueKey){
+        return ['Result', valueKey].join(' - ');
+    }
+});
+</code></pre>
+
+<h2>
+<a id="custom-styling" class="anchor" href="#custom-styling" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Custom styling</h2>
+
+<p>Styling is written in SCSS so it can be overwrited or even just copied into project.
+Styles can be build using command:</p>
+
+<pre><code>user@machine$:path/to/ng-ranger~ gulp compile:styles
+</code></pre>
+
+<h2>
+<a id="custom-build" class="anchor" href="#custom-build" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Custom Build</h2>
+
+<p>Since the source of the sliders written in typescript you must have installed typescript (1.7) already.
+The build flow is written in gulp so gulp also should be installed.</p>
+
+<p>To start build run:</p>
+
+<pre><code>user@machine$:path/to/ng-ranger~ gulp build
+</code></pre>
+
+<p>This process will compile typescript file into source javascript file located in <strong>src/js</strong> , also compiles scss files into css files and outputs to <strong>src/css</strong> and runs the minification which outputs to <strong>dist/js</strong> and <strong>dist/css</strong></p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/dannystyleart/ngRanger">ngRanger</a> is maintained by <a href="https://github.com/dannystyleart">dannystyleart</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+            <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-73787982-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
