@@ -1,0 +1,85 @@
+[ng-ranger] [class^="ng-ranger-handle"], .ng-ranger [class^="ng-ranger-handle"] {
+  border-radius: 999px;
+}
+
+[ng-ranger], .ng-ranger, [ng-ranger] *, .ng-ranger * {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+[ng-ranger], .ng-ranger {
+  display: block;
+  position: relative;
+  line-height: 1;
+  height: 62px;
+}
+
+[ng-ranger] .ng-ranger-min-label,
+[ng-ranger] .ng-ranger-max-label,
+[ng-ranger] .ng-ranger-label-low,
+[ng-ranger] .ng-ranger-label-high,
+[ng-ranger] .ng-ranger-label-cmb, .ng-ranger .ng-ranger-min-label,
+.ng-ranger .ng-ranger-max-label,
+.ng-ranger .ng-ranger-label-low,
+.ng-ranger .ng-ranger-label-high,
+.ng-ranger .ng-ranger-label-cmb {
+  display: inline-block;
+  position: absolute;
+  top: 0px;
+  cursor: default;
+  color: #1a1a1a;
+  white-space: nowrap;
+}
+
+[ng-ranger] [class^="ng-ranger-handle"], .ng-ranger [class^="ng-ranger-handle"] {
+  display: inline-block;
+  height: 16px;
+  width: 16px;
+  background: #6495ED;
+  z-index: 1;
+  position: absolute;
+  cursor: pointer;
+  top: 31px;
+  margin-top: -8px;
+  transition: box-shadow 120ms ease-in-out;
+}
+
+[ng-ranger] [class^="ng-ranger-handle"]:hover, .ng-ranger [class^="ng-ranger-handle"]:hover {
+  background: #6495ED;
+}
+
+[ng-ranger] [class^="ng-ranger-handle"]:active, [ng-ranger] [class^="ng-ranger-handle"].active, .ng-ranger [class^="ng-ranger-handle"]:active, .ng-ranger [class^="ng-ranger-handle"].active {
+  background: #6495ED;
+  box-shadow: 0 0 0 10px rgba(100, 149, 237, 0.25);
+}
+
+[ng-ranger] [class^="ng-ranger-handle"]:before, [ng-ranger] [class^="ng-ranger-handle"]:after, .ng-ranger [class^="ng-ranger-handle"]:before, .ng-ranger [class^="ng-ranger-handle"]:after {
+  content: '';
+  display: table;
+}
+
+[ng-ranger] .ng-ranger-fullbar, .ng-ranger .ng-ranger-fullbar {
+  display: block;
+  height: 2px;
+  width: 100%;
+  box-sizing: border-box;
+  background: #eeeeee;
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+[ng-ranger] .ng-ranger-selection, .ng-ranger .ng-ranger-selection {
+  background: #6495ED;
+  pointer-events: none;
+  display: block;
+  height: 2px;
+  box-sizing: border-box;
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+}

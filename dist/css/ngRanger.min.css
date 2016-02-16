@@ -1,6 +1,6 @@
 /**
 
-@name       ngSlider AngularJS directive
+@name       ngRanger AngularJS directive
 @author     Daniel Sebestyen <dannystyleart@gmail.com>
 @url        https://gitlab.com/dannystyleart/ng-slider
 @license    MIT
@@ -31,21 +31,21 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 */
-.ng-slider, .ng-slider *, [ng-slider], [ng-slider] * {
+.ng-ranger, .ng-ranger *, [ng-ranger], [ng-ranger] * {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none
 }
 
-.ng-slider, [ng-slider] {
+.ng-ranger, [ng-ranger] {
     display: block;
     position: relative;
     line-height: 1;
     height: 62px
 }
 
-.ng-slider .ng-slider-label-cmb, .ng-slider .ng-slider-label-high, .ng-slider .ng-slider-label-low, .ng-slider .ng-slider-max-label, .ng-slider .ng-slider-min-label, [ng-slider] .ng-slider-label-cmb, [ng-slider] .ng-slider-label-high, [ng-slider] .ng-slider-label-low, [ng-slider] .ng-slider-max-label, [ng-slider] .ng-slider-min-label {
+.ng-ranger .ng-ranger-label-cmb, .ng-ranger .ng-ranger-label-high, .ng-ranger .ng-ranger-label-low, .ng-ranger .ng-ranger-max-label, .ng-ranger .ng-ranger-min-label, [ng-ranger] .ng-ranger-label-cmb, [ng-ranger] .ng-ranger-label-high, [ng-ranger] .ng-ranger-label-low, [ng-ranger] .ng-ranger-max-label, [ng-ranger] .ng-ranger-min-label {
     display: inline-block;
     position: absolute;
     top: 0;
@@ -54,7 +54,7 @@ OTHER DEALINGS IN THE SOFTWARE.
     white-space: nowrap
 }
 
-.ng-slider [class^=ng-slider-handle], [ng-slider] [class^=ng-slider-handle] {
+.ng-ranger [class^=ng-ranger-handle], [ng-ranger] [class^=ng-ranger-handle] {
     border-radius: 999px;
     display: inline-block;
     height: 16px;
@@ -68,21 +68,21 @@ OTHER DEALINGS IN THE SOFTWARE.
     transition: box-shadow 120ms ease-in-out
 }
 
-.ng-slider [class^=ng-slider-handle]:hover, [ng-slider] [class^=ng-slider-handle]:hover {
+.ng-ranger [class^=ng-ranger-handle]:hover, [ng-ranger] [class^=ng-ranger-handle]:hover {
     background: #6495ED
 }
 
-.ng-slider [class^=ng-slider-handle].active, .ng-slider [class^=ng-slider-handle]:active, [ng-slider] [class^=ng-slider-handle].active, [ng-slider] [class^=ng-slider-handle]:active {
+.ng-ranger [class^=ng-ranger-handle].active, .ng-ranger [class^=ng-ranger-handle]:active, [ng-ranger] [class^=ng-ranger-handle].active, [ng-ranger] [class^=ng-ranger-handle]:active {
     background: #6495ED;
     box-shadow: 0 0 0 10px rgba(100, 149, 237, .25)
 }
 
-.ng-slider [class^=ng-slider-handle]:after, .ng-slider [class^=ng-slider-handle]:before, [ng-slider] [class^=ng-slider-handle]:after, [ng-slider] [class^=ng-slider-handle]:before {
+.ng-ranger [class^=ng-ranger-handle]:after, .ng-ranger [class^=ng-ranger-handle]:before, [ng-ranger] [class^=ng-ranger-handle]:after, [ng-ranger] [class^=ng-ranger-handle]:before {
     content: '';
     display: table
 }
 
-.ng-slider .ng-slider-fullbar, [ng-slider] .ng-slider-fullbar {
+.ng-ranger .ng-ranger-fullbar, [ng-ranger] .ng-ranger-fullbar {
     display: block;
     height: 2px;
     width: 100%;
@@ -94,7 +94,7 @@ OTHER DEALINGS IN THE SOFTWARE.
     transform: translateY(-50%)
 }
 
-.ng-slider .ng-slider-selection, [ng-slider] .ng-slider-selection {
+.ng-ranger .ng-ranger-selection, [ng-ranger] .ng-ranger-selection {
     background: #6495ED;
     pointer-events: none;
     display: block;
